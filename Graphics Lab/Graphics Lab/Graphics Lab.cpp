@@ -1,20 +1,12 @@
+#include "Graphics Lab.h"
 
-#include <iostream>
-#include <fstream>
-#include <algorithm>
 
-#include <glm/glm.hpp>
-#include "getbmp.h"
-#include <SDL.h>
-
-using vector3 = glm::vec3;
-using namespace std;
 
 void render()
 {
 	const  float PI = 3.14159;
-	const int WIDTH = 48;
-	const int HEIGHT = 27;
+	const int WIDTH = 480;
+	const int HEIGHT = 270;
 	//Angle A
 	const int FOV = 30;
 
@@ -24,10 +16,13 @@ void render()
 
 	//from rastor space to normalised
 	float pixelNormalisedX, pixelNormalisedY;
-	//from normalised space to screen space
+	//from normalised space to screen space (PixelRemapped)
 	float pixelScreenX, pixelScreenY;
-	//from screen space to world space
+	//from screen space to world space (PixelCamera)
 	float pixelWorldX, pixelWorldY;
+
+
+	vector3 pixelCameraSpace;
 
 
 	//Internal Aspect Ratio
@@ -37,17 +32,34 @@ void render()
 
 
 	vector3 **image = new vector3*[WIDTH];
-	for (int i = 0; i < WIDTH; i++) { image[i] = new vector3[HEIGHT]; }
-
+	for (int i = 0; i < WIDTH; i++)
+	{
+		image[i] = new vector3[HEIGHT];
+	}
+	
 	iAR = WIDTH / (float)HEIGHT;
+
+	list<Sphere> spheres;
+
+	Sphere redS =		Sphere(vector3(0,		0,		-20), 4, vector3(1.00, 0.32, 0.36));
+	Sphere yellowS =	Sphere(vector3(5,		-1,		-15), 2, vector3(0.90, 0.76, 0.46));
+	Sphere lightBlueS = Sphere(vector3(5,		0,		-25), 3, vector3(0.65, 0.77, 0.97));
+	Sphere lightGrayS = Sphere(vector3(-5.5,	0,		-15), 3, vector3(0.90, 0.90, 0.90));
+	Sphere darkGrayS =	Sphere(vector3(0,	-10004,		-20), 10000, vector3(0.20, 0.20, 0.20));
+	spheres.push_back(redS);
+	spheres.push_back(yellowS);
+	spheres.push_back(lightBlueS);
+	spheres.push_back(lightGrayS);
+	spheres.push_back(darkGrayS);
+
+
+
+
+
 	for (int y = 0; y < HEIGHT; ++y)
 	{
 		for (int x = 0; x < WIDTH; ++x)
 		{
-			image[x][y].r = 100;	
-			image[x][y].g = 0;	
-			image[x][y].b = 100;	
-
 
 			pixelNormalisedX = (x + 0.5) / (float)WIDTH;
 			pixelNormalisedY = (y + 0.5) / (float)HEIGHT;
@@ -58,14 +70,30 @@ void render()
 			pixelWorldX = pixelScreenX * tanValue;
 			pixelWorldY = pixelScreenY * tanValue;
 
-			image[x][y].x = pixelWorldX;
-			image[x][y].y = pixelWorldY;
-			image[x][y].z = -1.0;
+			//set pixel camera space - in regards to origin
+			//TODO - add object origin manipulation 
+			//													,distance from origin
+			pixelCameraSpace = vector3(pixelWorldX, pixelWorldY, -1.0);
+
+			rayDirection = glm::normalize(pixelCameraSpace - rayOrigin);
+
+			renderSpheres(spheres, rayOrigin, rayDirection, image, x, y);
+		
+
 			
+
 		}
 
 	}
 
+	createPPM(WIDTH, HEIGHT, image);
+
+
+
+
+}
+void createPPM(const int &WIDTH, const int &HEIGHT, vector3 ** image)
+{
 	// Save result to a PPM image
 	std::ofstream ofs("./untitled.ppm", std::ios::out | std::ios::binary);
 	ofs << "P6\n" << WIDTH << " " << HEIGHT << "\n255\n";
@@ -77,36 +105,70 @@ void render()
 				(unsigned char)(std::min((float)1, (float)image[x][y].y) * 255) <<
 				(unsigned char)(std::min((float)1, (float)image[x][y].z) * 255);
 		}
-		
-		cout << ((1 / (float)HEIGHT)*y) *100 << "%\n";
+
+		cout << ((1 / (float)HEIGHT)*y) * 100 << "%\n";
 	}
 	ofs.close();
-
 }
 
-
-void mathTest()
+void renderSpheres(std::list<Sphere> &spheres, vector3 &rayOrigin, vector3 &rayDirection, vector3 ** image, int x, int y)
 {
-	vector3 one = { 1, 2, 3 };
-	vector3 two = { 4, 5, 5 };
+	vector3 tempP0 = vector3(NULL);
+	vector3 tempP1 = vector3(NULL);
 
-	vector3 sum = one + two;
+	for (Sphere ball : spheres)
+	{
+		vector3 l = ball.position - rayOrigin;
+		double tCA = glm::dot(l, rayDirection);
+		double s = glm::sqrt(glm::dot(l, l) - glm::pow(tCA, 2));
+		double tHC = glm::sqrt(glm::pow(ball.radius, 2) - s);
 
-	cout << "one" << "[" << one.x << "," << one.y << "," << one.z << "]\n";
-	cout << "two" << "[" << two.x << "," << two.y << "," << two.z << "]\n\n";
-	cout << "sum" << "[" << sum.x << "," << sum.y << "," << sum.z << "]";
+		if (tCA < 0);//no hit
+		else if (s > ball.radius);//no hit
+		else
+		{
+			double t0 = tCA - tHC;
+			double t1 = tCA + tHC;
+
+			vector3 p0 = rayOrigin + (float)t0 * rayDirection;
+			vector3 p1 = rayOrigin + (float)t1 * rayDirection;
+
+
+			if (glm::length(p0) < glm::length(tempP0))
+			{
+				tempP0 = p0;
+				tempP1 = p1;
+				image[x][y].x = ball.colour.x;
+				image[x][y].y = ball.colour.y;
+				image[x][y].z = ball.colour.z;
+			}
+			else if (glm::length(tempP0) == 0 && glm::length(tempP1) == 0)
+			{
+				tempP0 = p0;
+				tempP1 = p1;
+				image[x][y].x = ball.colour.x;
+				image[x][y].y = ball.colour.y;
+				image[x][y].z = ball.colour.z;
+			}
+
+
+
+
+
+		}
+	}
 }
+
 
 
 int wmain()
 {
-	//mathTest();
 
 
 	render();
 	cout << "Done";
 	string hi;
-	getline(cin,hi );
+	getline(cin, hi);
 
 	return 0;
 }

@@ -50,6 +50,10 @@ void render(const int &WIDTH, const int &HEIGHT)
 	Plane floor = Plane(vector3(0, -10, -20),glm::vec3(0,-1,0), vector3(0.20, 0.20, 0.20));
 	planes.push_back(floor);
 
+	list<Triangle> triangles;
+	Triangle tri = Triangle(vector3(0, 1, -20), glm::vec3(-1.9, -1, -20), vector3(1.6, -0.5, -20), glm::vec3(0, 0.5, 0.5));
+	triangles.push_back(tri);
+
 	SDL_Window *window = SDL_CreateWindow("Viewer", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, APP_WIDTH, APP_HEIGHT, SDL_WINDOW_SHOWN);
 	SDL_Surface *surface = nullptr;
 
@@ -81,6 +85,7 @@ void render(const int &WIDTH, const int &HEIGHT)
 			bool hasHit = false;
 			Plane::renderPlanes(planes, rayOrigin, rayDirection, image, x, y, hasHit);
 			Sphere::renderSpheres(spheres, rayOrigin, rayDirection, image, x, y, hasHit);
+			Triangle::renderTriangles(triangles, rayOrigin, rayDirection, image, x, y, hasHit);
 			
 
 

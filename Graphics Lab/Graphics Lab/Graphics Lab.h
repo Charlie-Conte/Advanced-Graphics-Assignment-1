@@ -12,6 +12,7 @@
 
 #include "Sphere.h"
 #include "Plane.h"
+#include "Triangle.h"
 
 
 using vector3 = glm::vec3;

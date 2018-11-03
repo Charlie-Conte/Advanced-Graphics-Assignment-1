@@ -2,7 +2,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <iostream>
-
+#include <list>
 class Object
 {
 public:
@@ -11,7 +11,7 @@ public:
 	Object(glm::vec3 position);
 	void PrintMatrix();
 
-	glm::vec3 position;
+	glm::vec3 _position;
 
 	
 };

@@ -4,10 +4,6 @@
 
 void render(const int &WIDTH, const int &HEIGHT)
 {
-
-	//Angle A
-	const int FOV = 30;
-
 	//Ray is O + tD
 	//rayOrigin = O		rayDirection = D		rayDistance = t
 	vector3	rayOrigin = { 0,0,0 }, rayDirection, rayDistance;
@@ -43,17 +39,20 @@ void render(const int &WIDTH, const int &HEIGHT)
 	Sphere yellowS =	Sphere(vector3(5,		-1,		-15), 2, vector3(0.90, 0.76, 0.46));
 	Sphere lightBlueS = Sphere(vector3(5,		0,		-25), 3, vector3(0.65, 0.77, 0.97));
 	Sphere lightGrayS = Sphere(vector3(-5.5,	0,		-15), 3, vector3(0.90, 0.90, 0.90));
-	Sphere darkGrayS =	Sphere(vector3(0,	-10004,		-20), 10000, vector3(0.20, 0.20, 0.20));
+	//Sphere darkGrayS =	Sphere(vector3(0,	-10004,		-20), 10000, vector3(0.20, 0.20, 0.20));
 	spheres.push_back(redS);
 	spheres.push_back(yellowS);
 	spheres.push_back(lightBlueS);
 	spheres.push_back(lightGrayS);
-	spheres.push_back(darkGrayS);
+	//spheres.push_back(darkGrayS);
 
+	list<Plane> planes;
+	Plane floor = Plane(vector3(0, -10, -20),glm::vec3(0,-1,0), vector3(0.20, 0.20, 0.20));
+	planes.push_back(floor);
 
 	SDL_Window *window = SDL_CreateWindow("Viewer", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, APP_WIDTH, APP_HEIGHT, SDL_WINDOW_SHOWN);
-
 	SDL_Surface *surface = nullptr;
+
 	surface = SDL_GetWindowSurface(window);
 
 	SDL_FillRect(surface, NULL, SDL_MapRGBA(surface->format, 0x00, 0x00, 0x00, 0x00));
@@ -79,8 +78,10 @@ void render(const int &WIDTH, const int &HEIGHT)
 
 			rayDirection = glm::normalize(pixelCameraSpace - rayOrigin);
 
-			renderSpheres(spheres, rayOrigin, rayDirection, image, x, y);
-
+			bool hasHit = false;
+			Plane::renderPlanes(planes, rayOrigin, rayDirection, image, x, y, hasHit);
+			Sphere::renderSpheres(spheres, rayOrigin, rayDirection, image, x, y, hasHit);
+			
 
 
 			typedef struct
@@ -128,53 +129,7 @@ void createPPM(const int &WIDTH, const int &HEIGHT, vector3 ** image)
 	ofs.close();
 }
 
-void renderSpheres(std::list<Sphere> &spheres, vector3 &rayOrigin, vector3 &rayDirection, vector3 ** image, int x, int y)
-{
-	vector3 tempP0 = vector3(NULL);
-	vector3 tempP1 = vector3(NULL);
 
-	for (Sphere ball : spheres)
-	{
-		vector3 l = ball.position - rayOrigin;
-		double tCA = glm::dot(l, rayDirection);
-		double s = glm::sqrt(glm::dot(l, l) - glm::pow(tCA, 2));
-		double tHC = glm::sqrt(glm::pow(ball.radius, 2) - s);
-
-		if (tCA < 0);//no hit
-		else if (s > ball.radius);//no hit
-		else
-		{
-			double t0 = tCA - tHC;
-			double t1 = tCA + tHC;
-
-			vector3 p0 = rayOrigin + (float)t0 * rayDirection;
-			vector3 p1 = rayOrigin + (float)t1 * rayDirection;
-
-
-			if (glm::length(p0) < glm::length(tempP0))
-			{
-				tempP0 = p0;
-				tempP1 = p1;
-				image[x][y].x = ball.colour.x;
-				image[x][y].y = ball.colour.y;
-				image[x][y].z = ball.colour.z;
-			}
-			else if (glm::length(tempP0) == 0 && glm::length(tempP1) == 0)
-			{
-				tempP0 = p0;
-				tempP1 = p1;
-				image[x][y].x = ball.colour.x;
-				image[x][y].y = ball.colour.y;
-				image[x][y].z = ball.colour.z;
-			}
-
-
-
-
-
-		}
-	}
-}
 
 
 int main(int argc, char* args[])

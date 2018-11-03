@@ -2,11 +2,9 @@
 
 
 
-void render()
+void render(const int &WIDTH, const int &HEIGHT)
 {
-	const  float PI = 3.14159;
-	const int WIDTH = 480;
-	const int HEIGHT = 270;
+
 	//Angle A
 	const int FOV = 30;
 
@@ -28,7 +26,7 @@ void render()
 	//Internal Aspect Ratio
 	float iAR;
 	//Tan value of half the FOV(Angle A) in Radians
-	float tanValue = tanf((FOV / 2)*PI / 180.0);
+	float tanValue = tanf((FOV / 2)*glm::pi<float>() / 180.0f);
 
 
 	vector3 **image = new vector3*[WIDTH];
@@ -53,18 +51,22 @@ void render()
 	spheres.push_back(darkGrayS);
 
 
+	SDL_Window *window = SDL_CreateWindow("Viewer", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, APP_WIDTH, APP_HEIGHT, SDL_WINDOW_SHOWN);
 
+	SDL_Surface *surface = nullptr;
+	surface = SDL_GetWindowSurface(window);
 
+	SDL_FillRect(surface, NULL, SDL_MapRGBA(surface->format, 0x00, 0x00, 0x00, 0x00));
 
 	for (int y = 0; y < HEIGHT; ++y)
 	{
 		for (int x = 0; x < WIDTH; ++x)
 		{
 
-			pixelNormalisedX = (x + 0.5) / (float)WIDTH;
-			pixelNormalisedY = (y + 0.5) / (float)HEIGHT;
-			pixelScreenX = 2 * pixelNormalisedX - 1.0;
-			pixelScreenY = 1.0 - 2 * pixelNormalisedY;
+			pixelNormalisedX = (x + 0.5f) / (float)WIDTH;
+			pixelNormalisedY = (y + 0.5f) / (float)HEIGHT;
+			pixelScreenX = 2 * pixelNormalisedX - 1.0f;
+			pixelScreenY = 1.0f - 2 * pixelNormalisedY;
 			pixelScreenX = pixelScreenX * iAR;
 
 			pixelWorldX = pixelScreenX * tanValue;
@@ -78,15 +80,30 @@ void render()
 			rayDirection = glm::normalize(pixelCameraSpace - rayOrigin);
 
 			renderSpheres(spheres, rayOrigin, rayDirection, image, x, y);
-		
 
-			
+
+
+			typedef struct
+			{
+				Uint8 r;
+				Uint8 g;
+				Uint8 b;
+				Uint8 unused;
+			} My_Color;
+			My_Color color;
+			color.r = (unsigned char)(std::min((float)1, (float)image[x][y].z) * 255);
+			color.g = (unsigned char)(std::min((float)1, (float)image[x][y].y) * 255);
+			color.b = (unsigned char)(std::min((float)1, (float)image[x][y].x) * 255);
+			Uint8* pixel = (Uint8*)surface->pixels;
+			pixel += (y * surface->pitch) + (x *(sizeof(Uint32)));
+			*((Uint32*)pixel) = *(Uint32 *) & color;
 
 		}
 
 	}
 
-	createPPM(WIDTH, HEIGHT, image);
+	SDL_UpdateWindowSurface(window);
+	//createPPM(WIDTH, HEIGHT, image);
 
 
 
@@ -106,7 +123,7 @@ void createPPM(const int &WIDTH, const int &HEIGHT, vector3 ** image)
 				(unsigned char)(std::min((float)1, (float)image[x][y].z) * 255);
 		}
 
-		cout << ((1 / (float)HEIGHT)*y) * 100 << "%\n";
+		//cout << ((1 / (float)HEIGHT)*y) * 100 << "%\n";
 	}
 	ofs.close();
 }
@@ -160,15 +177,38 @@ void renderSpheres(std::list<Sphere> &spheres, vector3 &rayOrigin, vector3 &rayD
 }
 
 
-
-int wmain()
+int main(int argc, char* args[])
 {
+	SDL_Init(SDL_INIT_VIDEO);
 
 
-	render();
-	cout << "Done";
-	string hi;
-	getline(cin, hi);
+	render(APP_WIDTH,APP_HEIGHT);
+	cout << "Done\n\n";
+
+
+
+	SDL_Event event;
+	while (true)
+	{
+		if (SDL_PollEvent(&event))
+		{
+			switch (event.type)
+			{
+			case SDL_KEYDOWN:
+				switch (event.key.keysym.sym)
+				{
+				case SDLK_ESCAPE:
+					return 0;
+					break;
+				}
+			case SDL_QUIT:
+
+				return 0;
+				break;
+			}
+		}
+	}
+
 
 	return 0;
 }

@@ -33,21 +33,14 @@ void Plane::renderPlanes(std::list<Plane> &planes, glm::vec3 &rayOrigin, glm::ve
 				{
 					hasHit = true;
 
-					glm::vec3 p0 = rayOrigin + (float)t * rayDirection;
+					glm::vec3 p0 = rayOrigin + t * rayDirection;
 
 					if (glm::length(p0) < glm::length(tempP0))
 					{
 						tempP0 = p0;
 
-						calculateColour(p0, image, x, y, thisPlane._colour, thisPlane._normal, rayDirection);
+						calculateColour(p0, image, x, y, thisPlane._colour, thisPlane._normal * -1.0f, rayDirection);
 					}
-					else if (glm::length(tempP0) == 0)
-					{
-						tempP0 = p0;
-
-						calculateColour(p0, image, x, y, thisPlane._colour, thisPlane._normal, rayDirection);
-					}
-
 				}
 			}
 		

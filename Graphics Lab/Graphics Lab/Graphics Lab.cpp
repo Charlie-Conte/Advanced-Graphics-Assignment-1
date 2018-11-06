@@ -38,7 +38,7 @@ void render(const int &WIDTH, const int &HEIGHT)
 #pragma region Setup Scene
 
 
-	//LightMain::ambientLight = glm::vec3(0.2f);
+
 	LightSource MainLight = LightSource(glm::vec3(0, 20, 0),glm::vec3(1));
 	LightMain::lights.push_back(MainLight);
 
@@ -56,7 +56,7 @@ void render(const int &WIDTH, const int &HEIGHT)
 	//spheres.push_back(darkGrayS);
 
 	list<Plane> planes;
-	Plane floor = Plane(glm::vec3(0, -10, -20),glm::vec3(0,-1,0), glm::vec3(0.20, 0.20, 0.20));
+	Plane floor = Plane(glm::vec3(0, -4, 0),glm::vec3(0,-1,0), glm::vec3(0.70, 0.70, 0.70));
 	planes.push_back(floor);
 
 	list<Triangle> triangles;
@@ -99,8 +99,8 @@ void render(const int &WIDTH, const int &HEIGHT)
 
 			bool hasHit = false;
 
-			glm::vec3 tempP0 = glm::vec3(NULL);
-			glm::vec3 tempP1 = glm::vec3(NULL);
+			glm::vec3 tempP0 = glm::vec3(1000000.f);
+			glm::vec3 tempP1 = glm::vec3(1000000.f);
 			Plane::renderPlanes(planes, rayOrigin, rayDirection, image, x, y, hasHit,tempP0);
 			Sphere::renderSpheres(spheres, rayOrigin, rayDirection, image, x, y, hasHit,tempP0,tempP1);
 			Triangle::renderTriangles(triangles, rayOrigin, rayDirection, image, x, y, hasHit,tempP0);

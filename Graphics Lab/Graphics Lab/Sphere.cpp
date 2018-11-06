@@ -20,10 +20,10 @@ Sphere::Sphere(glm::vec3 position, float radius, Material material) :
 
 
 
-double Sphere::intersect(glm::vec3 rayOrigin, glm::vec3 rayDirection)
+double Sphere::intersect(Ray *ray)
 {
-	glm::vec3 l = _position - rayOrigin;
-	double tCA = glm::dot(l, rayDirection);
+	glm::vec3 l = _position - ray->_origin;
+	double tCA = glm::dot(l, ray->_direction);
 	double s = glm::sqrt(glm::dot(l, l) - glm::pow(tCA, 2));
 	double tHC = glm::sqrt(glm::pow(_radius, 2) - s);
 
@@ -34,7 +34,7 @@ double Sphere::intersect(glm::vec3 rayOrigin, glm::vec3 rayDirection)
 		double t0 = tCA - tHC;
 		return t0;
 	}
-
+	
 }
 
 glm::vec3 Sphere::sphereShadowsAndReflection(vector<glm::vec3> listOfShadowRays, glm::vec3 ** image, int x, int y, glm::vec3 p0)
@@ -42,7 +42,7 @@ glm::vec3 Sphere::sphereShadowsAndReflection(vector<glm::vec3> listOfShadowRays,
 
 	for (int i = 0; i < listOfShadowRays.size(); i++)
 	{
-		double t0 = intersect(p0, listOfShadowRays[i]);
+		double t0 = intersect(new Ray(p0, listOfShadowRays[i]));
 		if (t0 > 0)
 		{
 			//image[x][y] = _material._diffuseColour * LightMain::ambientLight;

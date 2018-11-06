@@ -15,7 +15,7 @@ public:
 
 	//static void renderTriangles(std::list<Triangle>& triangles, glm::vec3 & rayOrigin, glm::vec3 & rayDirection, glm::vec3 ** image, int x, int y, glm::vec3 &tempP0, glm::vec3 &tempP0Shadow);
 
-	double intersect(glm::vec3 rayOrigin, glm::vec3 rayDirection) override;
+	double intersect(Ray *ray) override;
 
 	glm::vec3 normal(glm::vec3 p0) override;
 

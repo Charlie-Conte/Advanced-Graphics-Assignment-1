@@ -64,18 +64,18 @@ void Triangle::MoveObject(std::list<Triangle> &object, glm::vec3 movementVector)
 //	}
 //}
 
-double Triangle::intersect(glm::vec3 rayOrigin, glm::vec3 rayDirection)
+double Triangle::intersect(Ray *ray)
 {
 
 	//std::cout << thisTriangle._vert0.z << std::endl;
 	e1 = _vert1 - _vert0;
 	e2 = _vert2 - _vert0;
-	glm::vec3 oA = (rayOrigin - _vert0);
-	glm::vec3 dE2 = glm::cross(rayDirection, e2);
+	glm::vec3 oA = (ray->_origin - _vert0);
+	glm::vec3 dE2 = glm::cross(ray->_direction, e2);
 
 	u = glm::dot(oA, dE2) / glm::dot(e1, dE2);
 
-	v = glm::dot(rayDirection, glm::cross((oA), e1)) / glm::dot(e1, dE2);
+	v = glm::dot(ray->_direction, glm::cross((oA), e1)) / glm::dot(e1, dE2);
 
 	w = 1 - u - v;
 	float t = glm::dot(e2, glm::cross(oA, e1)) / glm::dot(e1, dE2);

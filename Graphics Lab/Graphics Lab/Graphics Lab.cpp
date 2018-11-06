@@ -51,21 +51,21 @@ void render(const int &WIDTH, const int &HEIGHT)
 	Sphere *lightGrayS = new Sphere(glm::vec3(-5.5, 0, -15), 3, Material(glm::vec3(0.90, 0.90, 0.90), glm::vec3(0.7f), 100));
 	Sphere *lightGrayS2 = new Sphere(glm::vec3(-5.5, 3, -13), 3, Material(glm::vec3(0.90, 0.90, 0.90), glm::vec3(0.7f), 100));
 
-	objectList.push_back(redS);
-	objectList.push_back(yellowS);
-	objectList.push_back(lightBlueS);
-	objectList.push_back(lightGrayS);
-	objectList.push_back(lightGrayS2);
+	Object::objectList.push_back(redS);
+	Object::objectList.push_back(yellowS);
+	Object::objectList.push_back(lightBlueS);
+	Object::objectList.push_back(lightGrayS);
+	Object::objectList.push_back(lightGrayS2);
 
 
 
 	Plane *floor = new Plane(glm::vec3(-0, -10, -0), glm::vec3(0, -1, 0), Material(glm::vec3(0.7f, 0.7f, 0.7f), glm::vec3(0.7f), 64));
-	objectList.push_back(floor);
+	Object::objectList.push_back(floor);
 
 
 	Triangle *tri = new Triangle(glm::vec3(0, 1, -16.1), glm::vec3(-1.9, -1, -16.1), glm::vec3(1.6, -0.5, -16.1), Material(glm::vec3(0, 0.5, 0.5), glm::vec3(0.7f), 128));
 	//Triangle triSmooth = Triangle(glm::vec3(0,1,-2), glm::vec3(-1.9, -1, -2), glm::vec3(1.6, -0.5, -2),glm::vec3(0,0.6f,1), glm::vec3(-0.4f,-0.4f,1), glm::vec3(0.4f,-0.4f,1), Material(glm::vec3(0, 0.5, 0.5), glm::vec3(0.7f), 128));
-	objectList.push_back(tri);
+	Object::objectList.push_back(tri);
 	//objectList.push_back(triSmooth);
 
 	//Triangle::MoveObject(fileObjects[0], glm::vec3(7, 0, -10));
@@ -104,6 +104,7 @@ void render(const int &WIDTH, const int &HEIGHT)
 
 			rayDirection = glm::normalize(pixelCameraSpace - rayOrigin);
 
+			Ray *mainRay = new Ray(rayDirection, rayOrigin);
 
 			image[x][y] = glm::vec3(0.22f,0.69f,0.87f); //set background colour
 
@@ -111,23 +112,12 @@ void render(const int &WIDTH, const int &HEIGHT)
 			double closestDistance = 1000000.f;
 			Object *closestObject = new Object(glm::vec3(0),Material());
 
-
-			for (Object *thisObject : objectList)
-			{
-				double tempDistance = thisObject->intersect(rayOrigin, rayDirection);
-				if (tempDistance > 0 && tempDistance < closestDistance)
-				{
-					closestObject = thisObject;
-					closestDistance = tempDistance;
-				}
-			}
+			mainRay->RayCast(closestDistance, closestObject);
 
 			if (closestDistance < 999999.f) {
 				glm::vec3 p0 = rayOrigin + closestDistance * rayDirection;
 				closestObject->calculateColour(p0, image, x, y, closestObject->_material, closestObject->normal(p0), rayDirection);
 			}
-
-
 
 			typedef struct
 			{
@@ -155,6 +145,7 @@ void render(const int &WIDTH, const int &HEIGHT)
 
 
 }
+
 void createPPM(const int &WIDTH, const int &HEIGHT, glm::vec3 ** image)
 {
 	// Save result to a PPM image

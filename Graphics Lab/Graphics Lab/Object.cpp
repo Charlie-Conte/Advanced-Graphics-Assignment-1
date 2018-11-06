@@ -1,7 +1,6 @@
 #include "Object.h"
 
-
-
+vector<Object *> Object::objectList;
 
 Object::Object(glm::vec3 position, Material material):
 	_position(position), _material(material)
@@ -46,13 +45,16 @@ vector<glm::vec3> Object::calculateColour(glm::vec3 & p0, glm::vec3 ** image, in
 		specularColour = material._specularColour	* lightSource._intensity	*	glm::pow(	glm::max(rDotV, 0.0f), material._shininess);
 
 		// PUT SHADOW STUFF HERE
+		double t;
+		Ray *ray = new Ray();
+		ray->RayCast(t, objectList[0]);
 	}
 
 	image[x][y] = ambientColour + diffuseColour + specularColour;
 	return listOfShadowRays;
 }
 
-double Object::intersect(glm::vec3 rayOrigin, glm::vec3 rayDirection)
+double Object::intersect(Ray * ray)
 {
 	return 0.0;
 }

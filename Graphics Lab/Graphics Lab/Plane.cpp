@@ -17,11 +17,8 @@ Plane::Plane(glm::vec3 position, glm::vec3 normal, glm::vec3 colour)
 }
 
 
-void Plane::renderPlanes(std::list<Plane> &planes, glm::vec3 &rayOrigin, glm::vec3 &rayDirection, glm::vec3 ** image, int x, int y, bool &hasHit)
+void Plane::renderPlanes(std::list<Plane> &planes, glm::vec3 &rayOrigin, glm::vec3 &rayDirection, glm::vec3 ** image, int x, int y, bool &hasHit, glm::vec3 &tempP0)
 {
-	glm::vec3 tempP0 = glm::vec3(NULL);
-	
-
 
 	for (Plane thisPlane : planes)
 	{
@@ -31,7 +28,7 @@ void Plane::renderPlanes(std::list<Plane> &planes, glm::vec3 &rayOrigin, glm::ve
 			{
 				glm::vec3 rayOriginMinusPlaneOrigin =  thisPlane._position - rayOrigin;
 				float t = glm::dot(rayOriginMinusPlaneOrigin, thisPlane._normal) / denominator;
-				
+				//std::cout << thisPlane._normal.x << "," << thisPlane._normal.y << "," << thisPlane._normal.z << "\n";
 				if (t >= 0)
 				{
 					hasHit = true;
@@ -42,17 +39,13 @@ void Plane::renderPlanes(std::list<Plane> &planes, glm::vec3 &rayOrigin, glm::ve
 					{
 						tempP0 = p0;
 
-						image[x][y].x = thisPlane._colour.x;
-						image[x][y].y = thisPlane._colour.y;
-						image[x][y].z = thisPlane._colour.z;
+						calculateColour(p0, image, x, y, thisPlane._colour, thisPlane._normal, rayDirection);
 					}
 					else if (glm::length(tempP0) == 0)
 					{
 						tempP0 = p0;
 
-						image[x][y].x = thisPlane._colour.x;
-						image[x][y].y = thisPlane._colour.y;
-						image[x][y].z = thisPlane._colour.z;
+						calculateColour(p0, image, x, y, thisPlane._colour, thisPlane._normal, rayDirection);
 					}
 
 				}

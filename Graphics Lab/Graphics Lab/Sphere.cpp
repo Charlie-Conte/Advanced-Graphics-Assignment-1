@@ -18,12 +18,8 @@ Sphere::Sphere(glm::vec3 position,float radius, glm::vec3 colour)
 
 
 
-void Sphere::renderSpheres(std::list<Sphere> &spheres, glm::vec3 &rayOrigin, glm::vec3 &rayDirection, glm::vec3 ** image, int x, int y,bool &hasHit)
+void Sphere::renderSpheres(std::list<Sphere> &spheres, glm::vec3 &rayOrigin, glm::vec3 &rayDirection, glm::vec3 ** image, int x, int y,bool &hasHit, glm::vec3 &tempP0, glm::vec3 &tempP1)
 {
-	glm::vec3 tempP0 = glm::vec3(NULL);
-	glm::vec3 tempP1 = glm::vec3(NULL);
-
-
 
 	for (Sphere ball : spheres)
 	{
@@ -48,28 +44,33 @@ void Sphere::renderSpheres(std::list<Sphere> &spheres, glm::vec3 &rayOrigin, glm
 			glm::vec3 p0 = rayOrigin + (float)t0 * rayDirection;
 			glm::vec3 p1 = rayOrigin + (float)t1 * rayDirection;
 
+			glm::vec3 pMinusC = p0 - ball._position;
+			float pMinusCMag = glm::sqrt(glm::pow(pMinusC.x, 2) + glm::pow(pMinusC.y, 2) + glm::pow(pMinusC.z, 2));
+
+			glm::vec3 normal = pMinusC / pMinusCMag;
+
 
 			if (glm::length(p0) < glm::length(tempP0))
 			{
 				tempP0 = p0;
 				tempP1 = p1;
-				image[x][y].x = ball._colour.x;
-				image[x][y].y = ball._colour.y;
-				image[x][y].z = ball._colour.z;
+				calculateColour(p0, image, x, y, ball._colour, normal, rayDirection);
 			}
 			else if (glm::length(tempP0) == 0 && glm::length(tempP1) == 0)
 			{
 				tempP0 = p0;
 				tempP1 = p1;
-				image[x][y].x = ball._colour.x;
-				image[x][y].y = ball._colour.y;
-				image[x][y].z = ball._colour.z;
+				calculateColour(p0, image, x, y, ball._colour, normal, rayDirection);
 			}
 
 
 
-			//TODO normals  here
+
+
+
 
 		}
 	}
 }
+
+

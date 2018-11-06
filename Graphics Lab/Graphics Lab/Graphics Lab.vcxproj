@@ -20,14 +20,21 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Graphics Lab.cpp" />
+    <ClCompile Include="LightMain.cpp" />
+    <ClCompile Include="LightSource.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="objloader.cpp" />
     <ClCompile Include="Plane.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Graphics Lab.h" />
+    <ClInclude Include="LightMain.h" />
+    <ClInclude Include="LightSource.h" />
+    <ClInclude Include="MainIncludes.h" />
     <ClInclude Include="Object.h" />
+    <ClInclude Include="objloader.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="Triangle.h" />
@@ -97,6 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)..\glm-0.9.6.3;$(SolutionDir)..\SDL2-2.0.4\include;$(SolutionDir)..\getbmp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)..\getbmp;$(SolutionDir)..\SDL2-2.0.4\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>

@@ -6,14 +6,14 @@ Plane::Plane()
 {
 	_position = glm::vec3(0);
 	_normal = glm::vec3(0,1,0);
-	_colour = glm::vec3(0);
+	_material = Material(glm::vec3(0.5f,0,0.5f),glm::vec3(0.7f),64);
 }
 
-Plane::Plane(glm::vec3 position, glm::vec3 normal, glm::vec3 colour)
+Plane::Plane(glm::vec3 position, glm::vec3 normal, Material material)
 {
 	_position = position;
 	_normal = normal;
-	_colour = colour;
+	_material = material;
 }
 
 
@@ -39,7 +39,7 @@ void Plane::renderPlanes(std::list<Plane> &planes, glm::vec3 &rayOrigin, glm::ve
 					{
 						tempP0 = p0;
 
-						calculateColour(p0, image, x, y, thisPlane._colour, thisPlane._normal * -1.0f, rayDirection);
+						calculateColour(p0, image, x, y, thisPlane._material, thisPlane._normal * -1.0f, rayDirection);
 					}
 				}
 			}

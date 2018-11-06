@@ -5,9 +5,9 @@ class Triangle :
 {
 public:
 	Triangle();
-	Triangle(glm::vec3 vert0, glm::vec3 vert1, glm::vec3 vert2, glm::vec3 colour);
+	Triangle(glm::vec3 vert0, glm::vec3 vert1, glm::vec3 vert2, Material material);
 
-	Triangle(glm::vec3 vert0, glm::vec3 vert1, glm::vec3 vert2, glm::vec3 normal, glm::vec3 colour);
+	Triangle(glm::vec3 vert0, glm::vec3 vert1, glm::vec3 vert2, glm::vec3 normal, Material material);
 
 
 
@@ -20,7 +20,7 @@ public:
 	glm::vec3 _vert1;
 	glm::vec3 _vert2;
 	glm::vec3 _normal = glm::vec3(0);
-	glm::vec3 _colour;
+	Material _material;
 
 
 private:

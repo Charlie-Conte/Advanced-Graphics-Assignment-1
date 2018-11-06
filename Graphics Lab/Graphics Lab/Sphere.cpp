@@ -5,15 +5,15 @@ Sphere::Sphere()
 {
 	_position = glm::vec3(0);
 	_radius = 1;
-	_colour = glm::vec3(0);
+	_material = Material(glm::vec3(0.5f, 0, 0.5f), glm::vec3(0.7f), 64);
 }
 
 //Sphere example (vector 3(3.0,4.0,10.0), float 3.2, vector 3(0.2,0.0,0.64))
-Sphere::Sphere(glm::vec3 position,float radius, glm::vec3 colour)
+Sphere::Sphere(glm::vec3 position,float radius, Material material)
 {
 	_position = position;
 	_radius = radius;
-	_colour = colour;
+	_material = material;
 }
 
 
@@ -54,13 +54,13 @@ void Sphere::renderSpheres(std::list<Sphere> &spheres, glm::vec3 &rayOrigin, glm
 			{
 				tempP0 = p0;
 				tempP1 = p1;
-				calculateColour(p0, image, x, y, ball._colour, normal, rayDirection);
+				calculateColour(p0, image, x, y, ball._material, normal, rayDirection);
 			}
 			else if (glm::length(tempP0) == 0 && glm::length(tempP1) == 0)
 			{
 				tempP0 = p0;
 				tempP1 = p1;
-				calculateColour(p0, image, x, y, ball._colour, normal, rayDirection);
+				calculateColour(p0, image, x, y, ball._material, normal, rayDirection);
 			}
 
 

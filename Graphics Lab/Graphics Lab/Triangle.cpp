@@ -7,23 +7,23 @@ Triangle::Triangle()
 	_vert0 = glm::vec3(0, 0, 5);
 	_vert1 = glm::vec3(1, 0, 5);
 	_vert2 = glm::vec3(1, 1, 5);
-	_colour = glm::vec3(0.2, 0.2, 0.8);
+	_material = Material(glm::vec3(0.5f, 0, 0.5f), glm::vec3(0.7f), 64);
 }
 
-Triangle::Triangle(glm::vec3 vert0, glm::vec3 vert1, glm::vec3 vert2, glm::vec3 colour)
+Triangle::Triangle(glm::vec3 vert0, glm::vec3 vert1, glm::vec3 vert2, Material material)
 {
 	_vert0 = vert0;
 	_vert1 = vert1;
 	_vert2 = vert2;
-	_colour = colour;
+	_material = material;
 }
-Triangle::Triangle(glm::vec3 vert0, glm::vec3 vert1, glm::vec3 vert2, glm::vec3 normal, glm::vec3 colour)
+Triangle::Triangle(glm::vec3 vert0, glm::vec3 vert1, glm::vec3 vert2, glm::vec3 normal, Material material)
 {
 	_vert0 = vert0;
 	_vert1 = vert1;
 	_vert2 = vert2;
 	_normal = normal;
-	_colour = colour;
+	_material = material;
 }
 
 
@@ -90,13 +90,13 @@ void Triangle::renderTriangles(std::list<Triangle> &triangles, glm::vec3 &rayOri
 			{
 				tempP0 = p0;
 
-				calculateColour( p0, image, x, y, thisTriangle._colour, thisTriangle._normal, rayDirection);
+				calculateColour( p0, image, x, y, thisTriangle._material, thisTriangle._normal, rayDirection);
 			}
 			else if (glm::length(tempP0) == 0)
 			{
 				tempP0 = p0;
 
-				calculateColour( p0, image, x, y, thisTriangle._colour, thisTriangle._normal, rayDirection);
+				calculateColour( p0, image, x, y, thisTriangle._material, thisTriangle._normal, rayDirection);
 			}
 
 		}

@@ -1,5 +1,6 @@
 #pragma once
 #include "MainIncludes.h"
+#include "Material.h"
 
 class LightSource 
 {

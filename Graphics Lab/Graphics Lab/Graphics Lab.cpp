@@ -18,7 +18,7 @@ void render(const int &WIDTH, const int &HEIGHT)
 
 	glm::vec3 pixelCameraSpace;
 
-	
+
 	//Internal Aspect Ratio
 	float iAR;
 	//Tan value of half the FOV(Angle A) in Radians
@@ -30,7 +30,7 @@ void render(const int &WIDTH, const int &HEIGHT)
 	{
 		image[i] = new glm::vec3[HEIGHT];
 	}
-	
+
 	iAR = WIDTH / (float)HEIGHT;
 
 
@@ -39,28 +39,28 @@ void render(const int &WIDTH, const int &HEIGHT)
 
 
 
-	LightSource MainLight = LightSource(glm::vec3(0, 20, 0),glm::vec3(1));
+	LightSource MainLight = LightSource(glm::vec3(0, 20, 0), glm::vec3(1));
 	LightMain::lights.push_back(MainLight);
 
 	list<Sphere> spheres;
 
-	Sphere redS =		Sphere(glm::vec3(0,		0,		-20), 3.95f, glm::vec3(1.00, 0.32, 0.36));
-	Sphere yellowS =	Sphere(glm::vec3(5,		-1,		-15), 2, glm::vec3(0.90, 0.76, 0.46));
-	Sphere lightBlueS = Sphere(glm::vec3(5,		0,		-25), 3, glm::vec3(0.65, 0.77, 0.97));
-	Sphere lightGrayS = Sphere(glm::vec3(-5.5,	0,		-15), 3, glm::vec3(0.90, 0.90, 0.90));
-	//Sphere darkGrayS =	Sphere(glm::vec3(0,	-10004,		-20), 10000, glm::vec3(0.20, 0.20, 0.20));
+	Sphere redS = Sphere(glm::vec3(0, 0, -20), 3.95f, Material(glm::vec3(1.00, 0.32, 0.36), glm::vec3(0.7f), 128));
+	Sphere yellowS = Sphere(glm::vec3(5, -1, -15), 2, Material(glm::vec3(0.90, 0.76, 0.46), glm::vec3(0.7f), 200));
+	Sphere lightBlueS = Sphere(glm::vec3(5, 0, -25), 3, Material(glm::vec3(0.65, 0.77, 0.97), glm::vec3(0.7f), 60));
+	Sphere lightGrayS = Sphere(glm::vec3(-5.5, 0, -15), 3, Material(glm::vec3(0.90, 0.90, 0.90), glm::vec3(0.7f), 100));
+
 	spheres.push_back(redS);
 	spheres.push_back(yellowS);
 	spheres.push_back(lightBlueS);
 	spheres.push_back(lightGrayS);
-	//spheres.push_back(darkGrayS);
+
 
 	list<Plane> planes;
-	Plane floor = Plane(glm::vec3(0, -4, 0),glm::vec3(0,-1,0), glm::vec3(0.70, 0.70, 0.70));
+	Plane floor = Plane(glm::vec3(0, -4, 0), glm::vec3(0, -1, 0), Material(glm::vec3(0.7f, 0.7f, 0.7f), glm::vec3(0.7f), 64));
 	planes.push_back(floor);
 
 	list<Triangle> triangles;
-	Triangle tri = Triangle(glm::vec3(0, 1, -16.1), glm::vec3(-1.9, -1, -16.1), glm::vec3(1.6, -0.5, -16.1), glm::vec3(0, 0.5, 0.5));
+	Triangle tri = Triangle(glm::vec3(0, 1, -16.1), glm::vec3(-1.9, -1, -16.1), glm::vec3(1.6, -0.5, -16.1), Material(glm::vec3(0, 0.5, 0.5), glm::vec3(0.7f), 128));
 	triangles.push_back(tri);
 
 	Triangle::MoveObject(fileObjects[0], glm::vec3(7, 0, -10));
@@ -101,12 +101,12 @@ void render(const int &WIDTH, const int &HEIGHT)
 
 			glm::vec3 tempP0 = glm::vec3(1000000.f);
 			glm::vec3 tempP1 = glm::vec3(1000000.f);
-			Plane::renderPlanes(planes, rayOrigin, rayDirection, image, x, y, hasHit,tempP0);
-			Sphere::renderSpheres(spheres, rayOrigin, rayDirection, image, x, y, hasHit,tempP0,tempP1);
-			Triangle::renderTriangles(triangles, rayOrigin, rayDirection, image, x, y, hasHit,tempP0);
+			Plane::renderPlanes(planes, rayOrigin, rayDirection, image, x, y, hasHit, tempP0);
+			Sphere::renderSpheres(spheres, rayOrigin, rayDirection, image, x, y, hasHit, tempP0, tempP1);
+			Triangle::renderTriangles(triangles, rayOrigin, rayDirection, image, x, y, hasHit, tempP0);
 
 
-			Triangle::renderTriangles(fileObjects[0], rayOrigin, rayDirection, image, x, y, hasHit,tempP0);
+			Triangle::renderTriangles(fileObjects[0], rayOrigin, rayDirection, image, x, y, hasHit, tempP0);
 			//Triangle::renderTriangles(fileObjects[1], rayOrigin, rayDirection, image, x, y, hasHit,tempP0); //teapot
 
 
@@ -125,7 +125,7 @@ void render(const int &WIDTH, const int &HEIGHT)
 			color.b = (unsigned char)(std::min((float)1, (float)image[x][y].x) * 255);
 			Uint8* pixel = (Uint8*)surface->pixels;
 			pixel += (y * surface->pitch) + (x *(sizeof(Uint32)));
-			*((Uint32*)pixel) = *(Uint32 *) & color;
+			*((Uint32*)pixel) = *(Uint32 *)& color;
 
 		}
 
@@ -160,8 +160,8 @@ void createPPM(const int &WIDTH, const int &HEIGHT, glm::vec3 ** image)
 vector<list<Triangle>> loadFileObjects()
 {
 	vector<list<Triangle>> objectList;
-	objectList.push_back( loadOBJ("cube_simple.obj", glm::vec3(0.6, 0.0, 0.2)));
-	objectList.push_back( loadOBJ("teapot_simple.obj", glm::vec3(1, 1, 0.9)));
+	objectList.push_back(loadOBJ("cube_simple.obj", Material(glm::vec3(0.6, 0.0, 0.2), glm::vec3(0.7f), 128) ));
+	objectList.push_back(loadOBJ("teapot_simple.obj", Material(glm::vec3(1, 1, 0.9), glm::vec3(0.7f), 128) ));
 
 
 
@@ -170,7 +170,7 @@ vector<list<Triangle>> loadFileObjects()
 
 
 }
-list<Triangle> loadOBJ(string OBJ_Name, glm::vec3 colour)
+list<Triangle> loadOBJ(string OBJ_Name, Material material)
 {
 	vector<glm::vec3> verts, norms;
 	loadOBJ((basePath + OBJ_Name).c_str(), verts, norms);
@@ -179,7 +179,7 @@ list<Triangle> loadOBJ(string OBJ_Name, glm::vec3 colour)
 	list<Triangle> object;
 	for (unsigned int i = 0; i < verts.size(); i += 3)
 	{
-		object.push_back(Triangle(verts[i], verts[i + 1], verts[i + 2], norms[i], colour));
+		object.push_back(Triangle(verts[i], verts[i + 1], verts[i + 2], norms[i], material));
 	}
 	return object;
 }
@@ -194,7 +194,7 @@ int main(int argc, char* args[])
 
 	fileObjects = loadFileObjects();
 
-	render(APP_WIDTH,APP_HEIGHT);
+	render(APP_WIDTH, APP_HEIGHT);
 	cout << "Done\n\n";
 
 

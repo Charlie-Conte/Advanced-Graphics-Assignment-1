@@ -2,32 +2,25 @@
 
 
 
-Triangle::Triangle()
-{
-	_vert0 = glm::vec3(0, 0, 5);
-	_vert1 = glm::vec3(1, 0, 5);
-	_vert2 = glm::vec3(1, 1, 5);
-	_material = Material(glm::vec3(0.5f, 0, 0.5f), glm::vec3(0.7f), 64);
-}
+//Triangle::Triangle()
+//{
+//	_vert0 = glm::vec3(0, 0, 5);
+//	_vert1 = glm::vec3(1, 0, 5);
+//	_vert2 = glm::vec3(1, 1, 5);
+//	_material = Material(glm::vec3(0.5f, 0, 0.5f), glm::vec3(0.7f), 64);
+//}
 
-Triangle::Triangle(glm::vec3 vert0, glm::vec3 vert1, glm::vec3 vert2, Material material)
+Triangle::Triangle(glm::vec3 vert0, glm::vec3 vert1, glm::vec3 vert2, Material material) :
+	Object(glm::vec3(0), material), _vert0(vert0), _vert1(vert1), _vert2(vert2)
 {
-	_vert0 = vert0;
-	_vert1 = vert1;
-	_vert2 = vert2;
-	_material = material;
 }
-Triangle::Triangle(glm::vec3 vert0, glm::vec3 vert1, glm::vec3 vert2, glm::vec3 normal, Material material)
+Triangle::Triangle(glm::vec3 vert0, glm::vec3 vert1, glm::vec3 vert2, glm::vec3 normal0, glm::vec3 normal1, glm::vec3 normal2, Material material) :
+	Object(glm::vec3(0), material), _vert0(vert0), _vert1(vert1), _vert2(vert2), _normal0(normal0), _normal1(normal1), _normal2(normal2)
 {
-	_vert0 = vert0;
-	_vert1 = vert1;
-	_vert2 = vert2;
-	_normal = normal;
-	_material = material;
 }
 
 
-void Triangle::MoveObject(std::list<Triangle> &object,glm::vec3 movementVector)
+void Triangle::MoveObject(std::list<Triangle> &object, glm::vec3 movementVector)
 {
 	for (Triangle &tri : object)
 	{
@@ -40,65 +33,80 @@ void Triangle::MoveObject(std::list<Triangle> &object,glm::vec3 movementVector)
 	//std::cout << "\n\n\n"<< std::endl;
 }
 
-void Triangle::renderTriangles(std::list<Triangle> &triangles, glm::vec3 &rayOrigin, glm::vec3 &rayDirection, glm::vec3 ** image, int x, int y, bool &hasHit, glm::vec3 &tempP0)
+//void Triangle::renderTriangles(std::list<Triangle> &triangles, glm::vec3 &rayOrigin, glm::vec3 &rayDirection, glm::vec3 ** image, int x, int y, glm::vec3 &tempP0, glm::vec3 &tempP0Shadow)
+//{
+//
+//	for (Triangle thisTriangle : triangles)
+//	{
+//		double t = thisTriangle.intersect(rayOrigin, rayDirection);
+//
+//		if (t != 0)
+//		{
+//			
+//
+//			glm::vec3 p0 = rayOrigin + (float)t * rayDirection;
+//
+//
+//			if (thisTriangle._normal0 == glm::vec3(0) && thisTriangle._normal1 == glm::vec3(0)&& thisTriangle._normal2 == glm::vec3(0))
+//			{
+//				glm::vec3 flatFaceNormal;
+//				flatFaceNormal.x = (thisTriangle.e1.y * thisTriangle.e2.z) - (thisTriangle.e1.z * thisTriangle.e2.y);
+//				flatFaceNormal.y = (thisTriangle.e1.z * thisTriangle.e2.x) - (thisTriangle.e1.x * thisTriangle.e2.z);
+//				flatFaceNormal.z = (thisTriangle.e1.x * thisTriangle.e2.y) - (thisTriangle.e1.y * thisTriangle.e2.x);
+//				thisTriangle._normal0 = glm::normalize(flatFaceNormal);
+//				thisTriangle._normal1 = glm::normalize(flatFaceNormal);
+//				thisTriangle._normal2 = glm::normalize(flatFaceNormal);
+//				//std::cout << glm::length(thisTriangle._normal) << std::endl;
+//			}
+
+//
+//		}
+//	}
+//}
+
+double Triangle::intersect(glm::vec3 rayOrigin, glm::vec3 rayDirection)
 {
 
-	for (Triangle thisTriangle : triangles)
+	//std::cout << thisTriangle._vert0.z << std::endl;
+	e1 = _vert1 - _vert0;
+	e2 = _vert2 - _vert0;
+	glm::vec3 oA = (rayOrigin - _vert0);
+	glm::vec3 dE2 = glm::cross(rayDirection, e2);
+
+	u = glm::dot(oA, dE2) / glm::dot(e1, dE2);
+
+	v = glm::dot(rayDirection, glm::cross((oA), e1)) / glm::dot(e1, dE2);
+
+	w = 1 - u - v;
+	float t = glm::dot(e2, glm::cross(oA, e1)) / glm::dot(e1, dE2);
+
+	if (u < 0 || u > 1)return 0;
+
+	else if (v < 0 || u + v > 1)return 0;
+
+	else
 	{
-		//std::cout << thisTriangle._vert0.z << std::endl;
-		thisTriangle.e1 = thisTriangle._vert1 - thisTriangle._vert0;
-		thisTriangle.e2 = thisTriangle._vert2 - thisTriangle._vert0;
-		glm::vec3 oA = (rayOrigin - thisTriangle._vert0);
-		glm::vec3 dE2 = glm::cross(rayDirection , thisTriangle.e2);
 
-		thisTriangle.u = glm::dot(oA, dE2) / glm::dot(thisTriangle.e1, dE2);
-
-		thisTriangle.v = glm::dot(rayDirection, glm::cross((oA),thisTriangle.e1)) / glm::dot(thisTriangle.e1,dE2);
-
-		thisTriangle.w = 1 - thisTriangle.u - thisTriangle.v;
-
-		float t = glm::dot(thisTriangle.e2, glm::cross(oA , thisTriangle.e1)) / glm::dot(thisTriangle.e1, dE2);
-
-
-
-
-
-		if (thisTriangle.u < 0 || thisTriangle.u > 1);
-
-		else if (thisTriangle.v < 0 || thisTriangle.u + thisTriangle.v > 1);
-
-		else
-		{
-
-			hasHit = true;
-
-			glm::vec3 p0 = rayOrigin + (float)t * rayDirection;
-
-
-			if (thisTriangle._normal == glm::vec3(0))
-			{
-
-				thisTriangle._normal.x = (thisTriangle.e1.y * thisTriangle.e2.z) - (thisTriangle.e1.z * thisTriangle.e2.y);
-				thisTriangle._normal.y = (thisTriangle.e1.z * thisTriangle.e2.x) - (thisTriangle.e1.x * thisTriangle.e2.z);
-				thisTriangle._normal.z = (thisTriangle.e1.x * thisTriangle.e2.y) - (thisTriangle.e1.y * thisTriangle.e2.x);
-				thisTriangle._normal = glm::normalize(thisTriangle._normal);
-				//std::cout << glm::length(thisTriangle._normal) << std::endl;
-			}
-
-			//std::cout << thisTriangle._normal.x<<"\t,\t" << thisTriangle._normal.y<<"\t,\t" << thisTriangle._normal.z << std::endl;
-			if (glm::length(p0) < glm::length(tempP0))
-			{
-				tempP0 = p0;
-
-				calculateColour( p0, image, x, y, thisTriangle._material, thisTriangle._normal, rayDirection);
-			}
-			else if (glm::length(tempP0) == 0)
-			{
-				tempP0 = p0;
-
-				calculateColour( p0, image, x, y, thisTriangle._material, thisTriangle._normal, rayDirection);
-			}
-
-		}
+		return t;
 	}
+}
+
+glm::vec3 Triangle::normal(glm::vec3 p0)
+{
+	if (_normal0 == glm::vec3(0) && _normal1 == glm::vec3(0) && _normal2 == glm::vec3(0))
+	{
+		glm::vec3 flatFaceNormal;
+		flatFaceNormal.x = (e1.y * e2.z) - (e1.z * e2.y);
+		flatFaceNormal.y = (e1.z * e2.x) - (e1.x * e2.z);
+		flatFaceNormal.z = (e1.x * e2.y) - (e1.y * e2.x);
+		_normal0 = glm::normalize(flatFaceNormal);
+		_normal1 = glm::normalize(flatFaceNormal);
+		_normal2 = glm::normalize(flatFaceNormal);
+		//std::cout << glm::length(thisTriangle._normal) << std::endl;
+	}
+
+	glm::vec3 faceNormal = glm::normalize((w * _normal0) + (u * _normal1) + (v * _normal2));
+
+
+	return faceNormal;
 }

@@ -2,14 +2,11 @@
 
 
 
-Object::Object()
-{
-	_position = glm::vec3();
 
-}
-Object::Object(glm::vec3 position)
+Object::Object(glm::vec3 position, Material material):
+	_position(position), _material(material)
 {
-	_position = position;
+
 }
 
 void Object::PrintMatrix()
@@ -20,8 +17,9 @@ void Object::PrintMatrix()
 }
 
 
-void Object::calculateColour(glm::vec3 & p0, glm::vec3 ** image, int x, int y, Material material, glm::vec3 normal, glm::vec3 rayDirection)
+vector<glm::vec3> Object::calculateColour(glm::vec3 & p0, glm::vec3 ** image, int x, int y, Material material, glm::vec3 normal, glm::vec3 rayDirection)
 {
+	vector<glm::vec3>listOfShadowRays;
 
 	glm::vec3 ambientColour;
 	glm::vec3 diffuseColour;
@@ -32,10 +30,11 @@ void Object::calculateColour(glm::vec3 & p0, glm::vec3 ** image, int x, int y, M
 
 	for (LightSource lightSource : LightMain::lights)
 	{
-
-
 		//diffuse lighting
 		glm::vec3 l = glm::normalize(lightSource._position - p0);
+
+		listOfShadowRays.push_back(l);
+
 		glm::vec3 n = glm::normalize(normal);
 		diffuseColour = material._diffuseColour			* lightSource._intensity	*	fmax(	glm::dot(l, normal),0.0f);
 
@@ -46,10 +45,21 @@ void Object::calculateColour(glm::vec3 & p0, glm::vec3 ** image, int x, int y, M
 		float rDotV = glm::dot(glm::normalize(r), rayDirection *-1.0f);
 		specularColour = material._specularColour	* lightSource._intensity	*	glm::pow(	glm::max(rDotV, 0.0f), material._shininess);
 
+		// PUT SHADOW STUFF HERE
 	}
 
 	image[x][y] = ambientColour + diffuseColour + specularColour;
-	
+	return listOfShadowRays;
+}
+
+double Object::intersect(glm::vec3 rayOrigin, glm::vec3 rayDirection)
+{
+	return 0.0;
+}
+
+glm::vec3 Object::normal(glm::vec3 p0)
+{
+	return glm::vec3();
 }
 
 

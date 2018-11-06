@@ -26,6 +26,7 @@
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="objloader.cpp" />
     <ClCompile Include="Plane.cpp" />
+    <ClCompile Include="Ray.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="Triangle.cpp" />
   </ItemGroup>
@@ -38,6 +39,7 @@
     <ClInclude Include="Object.h" />
     <ClInclude Include="objloader.h" />
     <ClInclude Include="Plane.h" />
+    <ClInclude Include="Ray.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="Triangle.h" />
   </ItemGroup>

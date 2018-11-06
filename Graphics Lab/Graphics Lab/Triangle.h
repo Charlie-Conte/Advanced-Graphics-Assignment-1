@@ -4,23 +4,28 @@ class Triangle :
 	public Object
 {
 public:
-	Triangle();
+	//Triangle();
 	Triangle(glm::vec3 vert0, glm::vec3 vert1, glm::vec3 vert2, Material material);
 
-	Triangle(glm::vec3 vert0, glm::vec3 vert1, glm::vec3 vert2, glm::vec3 normal, Material material);
+	Triangle(glm::vec3 vert0, glm::vec3 vert1, glm::vec3 vert2, glm::vec3 normal0, glm::vec3 normal1, glm::vec3 normal2, Material material);
 
 
 
 	static void MoveObject(std::list<Triangle>& object, glm::vec3 movementVector);
 
-	static void renderTriangles(std::list<Triangle>& triangles, glm::vec3 & rayOrigin, glm::vec3 & rayDirection, glm::vec3 ** image, int x, int y, bool & hasHit, glm::vec3 &tempP0);
+	//static void renderTriangles(std::list<Triangle>& triangles, glm::vec3 & rayOrigin, glm::vec3 & rayDirection, glm::vec3 ** image, int x, int y, glm::vec3 &tempP0, glm::vec3 &tempP0Shadow);
 
-	
+	double intersect(glm::vec3 rayOrigin, glm::vec3 rayDirection) override;
+
+	glm::vec3 normal(glm::vec3 p0) override;
+
 	glm::vec3 _vert0;
 	glm::vec3 _vert1;
 	glm::vec3 _vert2;
-	glm::vec3 _normal = glm::vec3(0);
-	Material _material;
+	glm::vec3 _normal0 = glm::vec3(0);
+	glm::vec3 _normal1 = glm::vec3(0);
+	glm::vec3 _normal2 = glm::vec3(0);
+
 
 
 private:

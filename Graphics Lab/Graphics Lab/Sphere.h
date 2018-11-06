@@ -5,16 +5,18 @@ class Sphere :
 	public Object
 {
 public:
-	Sphere();
+
 	Sphere(glm::vec3 position, float radius, Material material);
-	static void renderSpheres(std::list<Sphere> &spheres, glm::vec3 &rayOrigin, glm::vec3 &rayDirection, glm::vec3 ** image, int x, int y, bool &hasHit, glm::vec3 &tempP0, glm::vec3 &tempP1);
-
-
-
 	
 
-	glm::vec3 _position;
-	Material _material;
+	double intersect(glm::vec3 rayOrigin, glm::vec3 rayDirection) override;
+
+
+	glm::vec3 sphereShadowsAndReflection(vector<glm::vec3> listOfShadowRays, glm::vec3 ** image, int x, int y, glm::vec3 p0);
+	
+
+	glm::vec3 normal(glm::vec3 p0) override;
+
 	float _radius;
 
 

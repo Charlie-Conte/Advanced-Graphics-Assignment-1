@@ -1,5 +1,6 @@
+#pragma once
 #include "Graphics Lab.h"
-
+#include "Ray.h"
 
 
 void render(const int &WIDTH, const int &HEIGHT)
@@ -42,29 +43,36 @@ void render(const int &WIDTH, const int &HEIGHT)
 	LightSource MainLight = LightSource(glm::vec3(0, 20, 0), glm::vec3(1));
 	LightMain::lights.push_back(MainLight);
 
-	list<Sphere> spheres;
-
-	Sphere redS = Sphere(glm::vec3(0, 0, -20), 3.95f, Material(glm::vec3(1.00, 0.32, 0.36), glm::vec3(0.7f), 128));
-	Sphere yellowS = Sphere(glm::vec3(5, -1, -15), 2, Material(glm::vec3(0.90, 0.76, 0.46), glm::vec3(0.7f), 200));
-	Sphere lightBlueS = Sphere(glm::vec3(5, 0, -25), 3, Material(glm::vec3(0.65, 0.77, 0.97), glm::vec3(0.7f), 60));
-	Sphere lightGrayS = Sphere(glm::vec3(-5.5, 0, -15), 3, Material(glm::vec3(0.90, 0.90, 0.90), glm::vec3(0.7f), 100));
-
-	spheres.push_back(redS);
-	spheres.push_back(yellowS);
-	spheres.push_back(lightBlueS);
-	spheres.push_back(lightGrayS);
 
 
-	list<Plane> planes;
-	Plane floor = Plane(glm::vec3(0, -4, 0), glm::vec3(0, -1, 0), Material(glm::vec3(0.7f, 0.7f, 0.7f), glm::vec3(0.7f), 64));
-	planes.push_back(floor);
+	Sphere *redS = new Sphere(glm::vec3(0, 0, -20), 3.95f, Material(glm::vec3(1.00, 0.32, 0.36), glm::vec3(0.7f), 128));
+	Sphere *yellowS = new Sphere(glm::vec3(5, -1, -15), 2, Material(glm::vec3(0.90, 0.76, 0.46), glm::vec3(0.7f), 200));
+	Sphere *lightBlueS = new Sphere(glm::vec3(5, 0, -25), 3, Material(glm::vec3(0.65, 0.77, 0.97), glm::vec3(0.7f), 60));
+	Sphere *lightGrayS = new Sphere(glm::vec3(-5.5, 0, -15), 3, Material(glm::vec3(0.90, 0.90, 0.90), glm::vec3(0.7f), 100));
+	Sphere *lightGrayS2 = new Sphere(glm::vec3(-5.5, 3, -13), 3, Material(glm::vec3(0.90, 0.90, 0.90), glm::vec3(0.7f), 100));
 
-	list<Triangle> triangles;
-	Triangle tri = Triangle(glm::vec3(0, 1, -16.1), glm::vec3(-1.9, -1, -16.1), glm::vec3(1.6, -0.5, -16.1), Material(glm::vec3(0, 0.5, 0.5), glm::vec3(0.7f), 128));
-	triangles.push_back(tri);
+	objectList.push_back(redS);
+	objectList.push_back(yellowS);
+	objectList.push_back(lightBlueS);
+	objectList.push_back(lightGrayS);
+	objectList.push_back(lightGrayS2);
 
-	Triangle::MoveObject(fileObjects[0], glm::vec3(7, 0, -10));
-	Triangle::MoveObject(fileObjects[1], glm::vec3(-7, 0, -10));
+
+
+	Plane *floor = new Plane(glm::vec3(-0, -10, -0), glm::vec3(0, -1, 0), Material(glm::vec3(0.7f, 0.7f, 0.7f), glm::vec3(0.7f), 64));
+	objectList.push_back(floor);
+
+
+	Triangle *tri = new Triangle(glm::vec3(0, 1, -16.1), glm::vec3(-1.9, -1, -16.1), glm::vec3(1.6, -0.5, -16.1), Material(glm::vec3(0, 0.5, 0.5), glm::vec3(0.7f), 128));
+	//Triangle triSmooth = Triangle(glm::vec3(0,1,-2), glm::vec3(-1.9, -1, -2), glm::vec3(1.6, -0.5, -2),glm::vec3(0,0.6f,1), glm::vec3(-0.4f,-0.4f,1), glm::vec3(0.4f,-0.4f,1), Material(glm::vec3(0, 0.5, 0.5), glm::vec3(0.7f), 128));
+	objectList.push_back(tri);
+	//objectList.push_back(triSmooth);
+
+	//Triangle::MoveObject(fileObjects[0], glm::vec3(7, 0, -10));
+	//Triangle::MoveObject(fileObjects[1], glm::vec3(-7, 0, -10));
+	//Triangle::MoveObject(fileObjects[2], glm::vec3(-8, 0, -10));
+
+
 
 #pragma endregion
 
@@ -97,18 +105,27 @@ void render(const int &WIDTH, const int &HEIGHT)
 			rayDirection = glm::normalize(pixelCameraSpace - rayOrigin);
 
 
-			bool hasHit = false;
-
-			glm::vec3 tempP0 = glm::vec3(1000000.f);
-			glm::vec3 tempP1 = glm::vec3(1000000.f);
-			Plane::renderPlanes(planes, rayOrigin, rayDirection, image, x, y, hasHit, tempP0);
-			Sphere::renderSpheres(spheres, rayOrigin, rayDirection, image, x, y, hasHit, tempP0, tempP1);
-			Triangle::renderTriangles(triangles, rayOrigin, rayDirection, image, x, y, hasHit, tempP0);
+			image[x][y] = glm::vec3(0.22f,0.69f,0.87f); //set background colour
 
 
-			Triangle::renderTriangles(fileObjects[0], rayOrigin, rayDirection, image, x, y, hasHit, tempP0);
-			//Triangle::renderTriangles(fileObjects[1], rayOrigin, rayDirection, image, x, y, hasHit,tempP0); //teapot
+			double closestDistance = 1000000.f;
+			Object *closestObject = new Object(glm::vec3(0),Material());
 
+
+			for (Object *thisObject : objectList)
+			{
+				double tempDistance = thisObject->intersect(rayOrigin, rayDirection);
+				if (tempDistance > 0 && tempDistance < closestDistance)
+				{
+					closestObject = thisObject;
+					closestDistance = tempDistance;
+				}
+			}
+
+			if (closestDistance < 999999.f) {
+				glm::vec3 p0 = rayOrigin + closestDistance * rayDirection;
+				closestObject->calculateColour(p0, image, x, y, closestObject->_material, closestObject->normal(p0), rayDirection);
+			}
 
 
 
@@ -160,8 +177,9 @@ void createPPM(const int &WIDTH, const int &HEIGHT, glm::vec3 ** image)
 vector<list<Triangle>> loadFileObjects()
 {
 	vector<list<Triangle>> objectList;
-	objectList.push_back(loadOBJ("cube_simple.obj", Material(glm::vec3(0.6, 0.0, 0.2), glm::vec3(0.7f), 128) ));
-	objectList.push_back(loadOBJ("teapot_simple.obj", Material(glm::vec3(1, 1, 0.9), glm::vec3(0.7f), 128) ));
+	//objectList.push_back(loadOBJ("cube_simple.obj", Material(glm::vec3(0.6, 0.0, 0.2), glm::vec3(0.7f), 128) ));
+	//objectList.push_back(loadOBJ("teapot_simple.obj", Material(glm::vec3(0, 1, 0.9), glm::vec3(0.7f), 128) ));
+	//objectList.push_back(loadOBJ("monkey_simple.obj", Material(glm::vec3(0.37, 0.15, 0.02), glm::vec3(0.7f), 50) ));
 
 
 
@@ -172,16 +190,15 @@ vector<list<Triangle>> loadFileObjects()
 }
 list<Triangle> loadOBJ(string OBJ_Name, Material material)
 {
-	vector<glm::vec3> verts, norms;
-	loadOBJ((basePath + OBJ_Name).c_str(), verts, norms);
+	//vector<glm::vec3> verts, norms;
+	//loadOBJ((basePath + OBJ_Name).c_str(), verts, norms);
 
 
-	list<Triangle> object;
-	for (unsigned int i = 0; i < verts.size(); i += 3)
-	{
-		object.push_back(Triangle(verts[i], verts[i + 1], verts[i + 2], norms[i], material));
-	}
-	return object;
+	//for (unsigned int i = 0; i < verts.size(); i += 3)
+	//{
+	//	objectList.push_back(new Triangle(verts[i], verts[i + 1], verts[i + 2], norms[i],norms[i+1],norms[i+2], material));
+	//}
+	//return object;
 }
 
 

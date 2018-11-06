@@ -20,6 +20,8 @@ vector<glm::vec3> Object::calculateColour(glm::vec3 & p0, glm::vec3 ** image, in
 {
 	vector<glm::vec3>listOfShadowRays;
 
+	bool hasHit = false;
+
 	glm::vec3 ambientColour;
 	glm::vec3 diffuseColour;
 	glm::vec3 specularColour;
@@ -45,12 +47,27 @@ vector<glm::vec3> Object::calculateColour(glm::vec3 & p0, glm::vec3 ** image, in
 		specularColour = material._specularColour	* lightSource._intensity	*	glm::pow(	glm::max(rDotV, 0.0f), material._shininess);
 
 		// PUT SHADOW STUFF HERE
-		double t;
-		Ray *ray = new Ray();
-		ray->RayCast(t, objectList[0]);
+		double closestDistance = 1000000.f;
+		Object *closestObject = nullptr;
+		Ray *shadowRay = new Ray(l, p0+(n * 1e-4));
+
+		shadowRay->RayCast(closestDistance, closestObject);
+		if (closestDistance < 999999.f)
+		{
+			hasHit = true;
+		}
+		delete shadowRay;
 	}
 
-	image[x][y] = ambientColour + diffuseColour + specularColour;
+	if (!hasHit)
+	{
+		image[x][y] = ambientColour + diffuseColour + specularColour;
+	}
+	else
+	{
+		image[x][y] = ambientColour;
+	}
+
 	return listOfShadowRays;
 }
 

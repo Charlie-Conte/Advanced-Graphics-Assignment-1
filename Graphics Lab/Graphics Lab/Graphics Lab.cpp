@@ -49,13 +49,13 @@ void render(const int &WIDTH, const int &HEIGHT)
 	Sphere *yellowS = new Sphere(glm::vec3(5, -1, -15), 2, Material(glm::vec3(0.90, 0.76, 0.46), glm::vec3(0.7f), 200));
 	Sphere *lightBlueS = new Sphere(glm::vec3(5, 0, -25), 3, Material(glm::vec3(0.65, 0.77, 0.97), glm::vec3(0.7f), 60));
 	Sphere *lightGrayS = new Sphere(glm::vec3(-5.5, 0, -15), 3, Material(glm::vec3(0.90, 0.90, 0.90), glm::vec3(0.7f), 100));
-	Sphere *lightGrayS2 = new Sphere(glm::vec3(-5.5, 3, -13), 3, Material(glm::vec3(0.90, 0.90, 0.90), glm::vec3(0.7f), 100));
+
 
 	Object::objectList.push_back(redS);
 	Object::objectList.push_back(yellowS);
 	Object::objectList.push_back(lightBlueS);
 	Object::objectList.push_back(lightGrayS);
-	Object::objectList.push_back(lightGrayS2);
+
 
 
 
@@ -68,9 +68,17 @@ void render(const int &WIDTH, const int &HEIGHT)
 	Object::objectList.push_back(tri);
 	//objectList.push_back(triSmooth);
 
-	//Triangle::MoveObject(fileObjects[0], glm::vec3(7, 0, -10));
-	//Triangle::MoveObject(fileObjects[1], glm::vec3(-7, 0, -10));
+	Triangle::MoveObject(fileObjects[0], glm::vec3(7.5, 0, -15));
+	Triangle::MoveObject(fileObjects[1], glm::vec3(-6, -2, -13));
 	//Triangle::MoveObject(fileObjects[2], glm::vec3(-8, 0, -10));
+
+	for (vector<Triangle*> vTri : fileObjects)
+	{
+		for (Triangle* thisTri :vTri)
+		{
+			Object::objectList.push_back(thisTri);
+		}
+	}
 
 
 
@@ -110,7 +118,7 @@ void render(const int &WIDTH, const int &HEIGHT)
 
 
 			double closestDistance = 1000000.f;
-			Object *closestObject = new Object(glm::vec3(0),Material());
+			Object *closestObject = nullptr;
 
 			mainRay->RayCast(closestDistance, closestObject);
 
@@ -118,6 +126,8 @@ void render(const int &WIDTH, const int &HEIGHT)
 				glm::vec3 p0 = rayOrigin + closestDistance * rayDirection;
 				closestObject->calculateColour(p0, image, x, y, closestObject->_material, closestObject->normal(p0), rayDirection);
 			}
+			delete mainRay;
+
 
 			typedef struct
 			{
@@ -139,7 +149,7 @@ void render(const int &WIDTH, const int &HEIGHT)
 	}
 
 	SDL_UpdateWindowSurface(window);
-	//createPPM(WIDTH, HEIGHT, image);
+	createPPM(WIDTH, HEIGHT, image);
 
 
 
@@ -149,7 +159,7 @@ void render(const int &WIDTH, const int &HEIGHT)
 void createPPM(const int &WIDTH, const int &HEIGHT, glm::vec3 ** image)
 {
 	// Save result to a PPM image
-	std::ofstream ofs("./untitled.ppm", std::ios::out | std::ios::binary);
+	std::ofstream ofs("./export.ppm", std::ios::out | std::ios::binary);
 	ofs << "P6\n" << WIDTH << " " << HEIGHT << "\n255\n";
 	for (int y = 0; y < HEIGHT; ++y)
 	{
@@ -165,31 +175,31 @@ void createPPM(const int &WIDTH, const int &HEIGHT, glm::vec3 ** image)
 	ofs.close();
 }
 
-vector<list<Triangle>> loadFileObjects()
+vector<vector<Triangle*>> loadFileObjects()
 {
-	vector<list<Triangle>> objectList;
-	//objectList.push_back(loadOBJ("cube_simple.obj", Material(glm::vec3(0.6, 0.0, 0.2), glm::vec3(0.7f), 128) ));
-	//objectList.push_back(loadOBJ("teapot_simple.obj", Material(glm::vec3(0, 1, 0.9), glm::vec3(0.7f), 128) ));
-	//objectList.push_back(loadOBJ("monkey_simple.obj", Material(glm::vec3(0.37, 0.15, 0.02), glm::vec3(0.7f), 50) ));
+	vector<vector<Triangle*>> importedOBJList;
+	importedOBJList.push_back(loadColouredOBJ("cube_simple.obj", Material(glm::vec3(0.6, 0.0, 0.2), glm::vec3(0.7f), 128) ));
+	importedOBJList.push_back(loadColouredOBJ("teapot_simple.obj", Material(glm::vec3(0, 1, 0.9), glm::vec3(0.7f), 128) ));
+	//importedOBJList.push_back(loadColouredOBJ("monkey_simple.obj", Material(glm::vec3(0.37, 0.15, 0.02), glm::vec3(0.7f), 50) ));
 
 
 
 
-	return objectList;
+	return importedOBJList;
 
 
 }
-list<Triangle> loadOBJ(string OBJ_Name, Material material)
+vector<Triangle*> loadColouredOBJ(string OBJ_Name, Material material)
 {
-	//vector<glm::vec3> verts, norms;
-	//loadOBJ((basePath + OBJ_Name).c_str(), verts, norms);
+	vector<glm::vec3> verts, norms;
+	loadOBJ((basePath + OBJ_Name).c_str(), verts, norms);
 
-
-	//for (unsigned int i = 0; i < verts.size(); i += 3)
-	//{
-	//	objectList.push_back(new Triangle(verts[i], verts[i + 1], verts[i + 2], norms[i],norms[i+1],norms[i+2], material));
-	//}
-	//return object;
+	vector<Triangle*> triList;
+	for (unsigned int i = 0; i < verts.size(); i += 3)
+	{
+		triList.push_back(new Triangle(verts[i], verts[i + 1], verts[i + 2], norms[i],norms[i+1],norms[i+2], material));
+	}
+	return triList;
 }
 
 

@@ -20,15 +20,15 @@ Triangle::Triangle(glm::vec3 vert0, glm::vec3 vert1, glm::vec3 vert2, glm::vec3 
 }
 
 
-void Triangle::MoveObject(std::list<Triangle> &object, glm::vec3 movementVector)
+void Triangle::MoveObject(std::vector<Triangle*> object, glm::vec3 movementVector)
 {
-	for (Triangle &tri : object)
+	for (Triangle *tri : object)
 	{
 		//std::cout << tri._vert0.z << std::endl;
-		tri._vert0 += movementVector;
+		tri->_vert0 += movementVector;
 		//std::cout << tri._vert0.z << std::endl;
-		tri._vert1 += movementVector;
-		tri._vert2 += movementVector;
+		tri->_vert1 += movementVector;
+		tri->_vert2 += movementVector;
 	}
 	//std::cout << "\n\n\n"<< std::endl;
 }

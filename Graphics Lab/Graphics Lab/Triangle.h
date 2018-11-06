@@ -11,7 +11,7 @@ public:
 
 
 
-	static void MoveObject(std::list<Triangle>& object, glm::vec3 movementVector);
+	static void MoveObject(std::vector<Triangle*> object, glm::vec3 movementVector);
 
 	//static void renderTriangles(std::list<Triangle>& triangles, glm::vec3 & rayOrigin, glm::vec3 & rayDirection, glm::vec3 ** image, int x, int y, glm::vec3 &tempP0, glm::vec3 &tempP0Shadow);
 

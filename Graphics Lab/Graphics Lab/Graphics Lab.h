@@ -8,7 +8,7 @@
 
 
 string basePath;
-vector<list<Triangle>> fileObjects;
+vector<vector<Triangle*>> fileObjects;
 
 const int APP_WIDTH = 1280;
 const int APP_HEIGHT = 720;
@@ -23,8 +23,8 @@ const int FOV = 60;
 
 
 void createPPM(const int &WIDTH, const int &HEIGHT, glm::vec3 ** image);
-vector<list<Triangle>> loadFileObjects();
-list<Triangle> loadOBJ(string OBJ_Name, Material material);
+vector<vector<Triangle*>> loadFileObjects();
+vector<Triangle*> loadColouredOBJ(string OBJ_Name, Material material);
 void render(const int &WIDTH, const int &HEIGHT);
 
 

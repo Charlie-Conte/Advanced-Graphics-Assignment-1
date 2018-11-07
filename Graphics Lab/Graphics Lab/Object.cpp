@@ -2,7 +2,11 @@
 
 vector<Object *> Object::objectList;
 
-Object::Object(glm::vec3 position, Material material):
+int Object::LIGHTING = 0;
+int Object::SHADOWS = 1;
+int Object::OBJECT_TOGGLE = 0;
+
+Object::Object(glm::vec3 position, Material material) :
 	_position(position), _material(material)
 {
 
@@ -37,19 +41,19 @@ vector<glm::vec3> Object::calculateColour(glm::vec3 & p0, glm::vec3 ** image, in
 		listOfShadowRays.push_back(l);
 
 		glm::vec3 n = glm::normalize(normal);
-		diffuseColour = material._diffuseColour			* lightSource._intensity	*	fmax(	glm::dot(l, normal),0.0f);
+		diffuseColour = material._diffuseColour			* lightSource._intensity	*	fmax(glm::dot(l, normal), 0.0f);
 
 
 		//specular lighting
 		glm::vec3 r = 2.0f * (glm::dot(l, n)) * n - l;
 
 		float rDotV = glm::dot(glm::normalize(r), rayDirection *-1.0f);
-		specularColour = material._specularColour	* lightSource._intensity	*	glm::pow(	glm::max(rDotV, 0.0f), material._shininess);
+		specularColour = material._specularColour	* lightSource._intensity	*	glm::pow(glm::max(rDotV, 0.0f), material._shininess);
 
 		// PUT SHADOW STUFF HERE
 		double closestDistance = 1000000.f;
 		Object *closestObject = nullptr;
-		Ray *shadowRay = new Ray(l, p0+(n * 1e-4));
+		Ray *shadowRay = new Ray(l, p0 + (n * 1e-4));
 
 		shadowRay->RayCast(closestDistance, closestObject);
 		if (closestDistance < 999999.f)
@@ -57,18 +61,49 @@ vector<glm::vec3> Object::calculateColour(glm::vec3 & p0, glm::vec3 ** image, in
 			hasHit = true;
 		}
 		delete shadowRay;
+
+	}
+	switch (LIGHTING)
+	{
+	case NO_LIGHT:
+		image[x][y] = material._diffuseColour;
+		break;
+	case AMBIENT:
+		setShadow(hasHit, image, x, y, ambientColour, glm::vec3(0), glm::vec3(0));
+		break;
+	case AMBIENT_AND_DIFFUSE:
+		setShadow(hasHit, image, x, y, ambientColour, diffuseColour, glm::vec3(0));
+		break;
+	case ALL:
+		setShadow(hasHit, image, x, y, ambientColour, diffuseColour, specularColour);
+		break;
 	}
 
-	if (!hasHit)
-	{
-		image[x][y] = ambientColour + diffuseColour + specularColour;
-	}
-	else
-	{
-		image[x][y] = ambientColour;
-	}
+
 
 	return listOfShadowRays;
+}
+
+void Object::setShadow(bool hasHit, glm::vec3 ** image, int x, int y, glm::vec3 ambientColour, glm::vec3 diffuseColour, glm::vec3 specularColour)
+{
+	switch (SHADOWS)
+	{
+	case HARD:
+		if (!hasHit)
+		{
+			image[x][y] = ambientColour + diffuseColour + specularColour;
+		}
+		else
+		{
+			image[x][y] = ambientColour;
+		}
+		break;
+	case NO_SHADOW:
+		image[x][y] = ambientColour + diffuseColour + specularColour;
+		break;
+	}
+
+
 }
 
 double Object::intersect(Ray * ray)

@@ -23,7 +23,7 @@ void render(const int &WIDTH, const int &HEIGHT)
 	//Internal Aspect Ratio
 	float iAR;
 	//Tan value of half the FOV(Angle A) in Radians
-	float tanValue = tanf((FOV / 2)*glm::pi<float>() / 180.0f);
+	float tanValue = tanf(((FOV + FOVmod) / 2)*glm::pi<float>() / 180.0f);
 
 
 	glm::vec3 **image = new glm::vec3*[WIDTH];
@@ -48,7 +48,7 @@ void render(const int &WIDTH, const int &HEIGHT)
 	Sphere *redS = new Sphere(glm::vec3(0, 0, -20), 3.95f, Material(glm::vec3(1.00, 0.32, 0.36), glm::vec3(0.7f), 128));
 	Sphere *yellowS = new Sphere(glm::vec3(5, -1, -15), 2, Material(glm::vec3(0.90, 0.76, 0.46), glm::vec3(0.7f), 200));
 	Sphere *lightBlueS = new Sphere(glm::vec3(5, 0, -25), 3, Material(glm::vec3(0.65, 0.77, 0.97), glm::vec3(0.7f), 60));
-	Sphere *lightGrayS = new Sphere(glm::vec3(-5.5, 0, -15), 3, Material(glm::vec3(0.90, 0.90, 0.90), glm::vec3(0.7f), 100));
+	Sphere *lightGrayS = new Sphere(glm::vec3(-5.5, 0, -22), 3, Material(glm::vec3(0.90, 0.90, 0.90), glm::vec3(0.7f), 100));
 
 
 	Object::objectList.push_back(redS);
@@ -69,8 +69,15 @@ void render(const int &WIDTH, const int &HEIGHT)
 	//objectList.push_back(triSmooth);
 
 	Triangle::MoveObject(fileObjects[0], glm::vec3(7.5, 0, -15));
-	Triangle::MoveObject(fileObjects[1], glm::vec3(-6, -2, -13));
-	//Triangle::MoveObject(fileObjects[2], glm::vec3(-8, 0, -10));
+
+	if (Object::OBJECT_TOGGLE == Object::PRIMATIVE_PLUS_TEAPOT)
+	{
+		Triangle::MoveObject(fileObjects[1], glm::vec3(-6, -2, -13));
+	}
+	if (Object::OBJECT_TOGGLE == Object::PRIMATIVE_PLUS_MONKEY)
+	{
+		Triangle::MoveObject(fileObjects[1], glm::vec3(-8, 0, -10));
+	}
 
 	for (vector<Triangle*> vTri : fileObjects)
 	{
@@ -84,12 +91,19 @@ void render(const int &WIDTH, const int &HEIGHT)
 
 #pragma endregion
 
-	SDL_Window *window = SDL_CreateWindow("Viewer", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, APP_WIDTH, APP_HEIGHT, SDL_WINDOW_SHOWN);
+	window = SDL_CreateWindow("Viewer", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
+	if (window == 0)
+	{
+		cout << "SDL_CreateWindow failed\n";
+	}
 	SDL_Surface *surface = nullptr;
 
 	surface = SDL_GetWindowSurface(window);
 
-	SDL_FillRect(surface, NULL, SDL_MapRGBA(surface->format, 0x00, 0x00, 0x00, 0x00));
+	if (SDL_FillRect(surface, NULL, SDL_MapRGBA(surface->format, 0x00, 0x00, 0x00, 0x00)) != 0)
+	{
+		cout << "SDL_FillRect failed\n";
+	}
 
 	for (int y = 0; y < HEIGHT; ++y)
 	{
@@ -106,7 +120,6 @@ void render(const int &WIDTH, const int &HEIGHT)
 			pixelWorldY = pixelScreenY * tanValue;
 
 			//set pixel camera space - in regards to origin
-			//TODO - add object origin manipulation 
 			//													,distance from origin
 			pixelCameraSpace = glm::vec3(pixelWorldX, pixelWorldY, -1.0);
 
@@ -126,7 +139,7 @@ void render(const int &WIDTH, const int &HEIGHT)
 				glm::vec3 p0 = rayOrigin + closestDistance * rayDirection;
 				closestObject->calculateColour(p0, image, x, y, closestObject->_material, closestObject->normal(p0), rayDirection);
 			}
-			delete mainRay;
+
 
 
 			typedef struct
@@ -144,14 +157,18 @@ void render(const int &WIDTH, const int &HEIGHT)
 			pixel += (y * surface->pitch) + (x *(sizeof(Uint32)));
 			*((Uint32*)pixel) = *(Uint32 *)& color;
 
+			delete mainRay;
+
+
 		}
 
 	}
 
-	SDL_UpdateWindowSurface(window);
+	if (SDL_UpdateWindowSurface(window) != 0)
+	{
+		cout << "SDL_UpdateWindowSurface failed\n";
+	}
 	createPPM(WIDTH, HEIGHT, image);
-
-
 
 
 }
@@ -179,9 +196,15 @@ vector<vector<Triangle*>> loadFileObjects()
 {
 	vector<vector<Triangle*>> importedOBJList;
 	importedOBJList.push_back(loadColouredOBJ("cube_simple.obj", Material(glm::vec3(0.6, 0.0, 0.2), glm::vec3(0.7f), 128) ));
-	importedOBJList.push_back(loadColouredOBJ("teapot_simple.obj", Material(glm::vec3(0, 1, 0.9), glm::vec3(0.7f), 128) ));
-	//importedOBJList.push_back(loadColouredOBJ("monkey_simple.obj", Material(glm::vec3(0.37, 0.15, 0.02), glm::vec3(0.7f), 50) ));
 
+	if (Object::OBJECT_TOGGLE == Object::PRIMATIVE_PLUS_TEAPOT)
+	{
+		importedOBJList.push_back(loadColouredOBJ("teapot_simple.obj", Material(glm::vec3(0, 1, 0.9), glm::vec3(0.7f), 128)));
+	}
+	if (Object::OBJECT_TOGGLE == Object::PRIMATIVE_PLUS_MONKEY)
+	{
+		importedOBJList.push_back(loadColouredOBJ("monkey_simple.obj", Material(glm::vec3(0.37, 0.15, 0.02), glm::vec3(0.7f), 50)));
+	}
 
 
 
@@ -210,9 +233,10 @@ int main(int argc, char* args[])
 	basePath = SDL_GetBasePath();
 	SDL_free(&basePath);
 
+
 	fileObjects = loadFileObjects();
 
-	render(APP_WIDTH, APP_HEIGHT);
+	render(APP_WIDTH*sizeModifier, APP_HEIGHT*sizeModifier);
 	cout << "Done\n\n";
 
 
@@ -227,10 +251,52 @@ int main(int argc, char* args[])
 			case SDL_KEYDOWN:
 				switch (event.key.keysym.sym)
 				{
+				case SDLK_l:
+					Object::LIGHTING += 1;
+					if (Object::LIGHTING == 4)Object::LIGHTING = 0;
+					if (Object::LIGHTING == 0)Object::SHADOWS = Object::NO_SHADOW;
+					reRender();
+					break;		
+				case SDLK_s:
+					Object::SHADOWS += 1;
+					if (Object::SHADOWS == 2)Object::SHADOWS = 0;
+					reRender();
+					break;
+
+				case SDLK_EQUALS:
+					FOVmod += FOVincrement;
+					reRender();
+					break;		
+				case SDLK_MINUS:
+					FOVmod -= FOVincrement;
+					reRender();
+					break;
+				case SDLK_b:
+					Object::OBJECT_TOGGLE = Object::PRIMATIVE;
+					reRender();
+					break;
+				case SDLK_n:
+					Object::OBJECT_TOGGLE = Object::PRIMATIVE_PLUS_TEAPOT;
+					reRender();
+					break;				
+				case SDLK_m:
+					Object::OBJECT_TOGGLE = Object::PRIMATIVE_PLUS_MONKEY;
+					reRender();
+					break;
+
+				case SDLK_UP:
+					sizeModifier += sizeIncrement;
+					reRender();
+					break;				
+				case SDLK_DOWN:
+					sizeModifier -= sizeIncrement;
+					reRender();
+					break;
 				case SDLK_ESCAPE:
 					return 0;
 					break;
 				}
+				break;
 			case SDL_QUIT:
 
 				return 0;
@@ -241,4 +307,13 @@ int main(int argc, char* args[])
 
 
 	return 0;
+}
+
+void reRender()
+{
+	Object::objectList.clear();
+	SDL_DestroyWindow(window);
+	fileObjects.clear();
+	fileObjects = loadFileObjects();
+	render(APP_WIDTH*sizeModifier, APP_HEIGHT*sizeModifier);
 }

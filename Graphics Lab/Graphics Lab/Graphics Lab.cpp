@@ -38,17 +38,20 @@ void render(const int &WIDTH, const int &HEIGHT)
 
 #pragma region Setup Scene
 
+	AreaLight *MainLight = nullptr;
 
+	if (activeLight == 1)MainLight = new AreaLight(glm::vec3(-4.5, 10, 0), glm::vec3(1), glm::vec3(9, 0.1, 9));
+	if (activeLight == 2)MainLight = new AreaLight(glm::vec3(10, 10, 0), glm::vec3(1), glm::vec3(5, 0.1, 5));
 
-	AreaLight *MainLight = new AreaLight(glm::vec3(-4.5, 20, -4.5), glm::vec3(1),glm::vec3(9,0.1,9));
 	LightMain::lights.push_back(MainLight);
 
 
 
-	Sphere *redS = new Sphere(glm::vec3(0, 0, -20), 3.95f, Material(glm::vec3(1.00, 0.32, 0.36), glm::vec3(0.7f), 128));
-	Sphere *yellowS = new Sphere(glm::vec3(5, -1, -15), 2, Material(glm::vec3(0.90, 0.76, 0.46), glm::vec3(0.7f), 200));
-	Sphere *lightBlueS = new Sphere(glm::vec3(5, 0, -25), 3, Material(glm::vec3(0.65, 0.77, 0.97), glm::vec3(0.7f), 60));
-	Sphere *lightGrayS = new Sphere(glm::vec3(-5.5, 0, -22), 3, Material(glm::vec3(0.90, 0.90, 0.90), glm::vec3(0.7f), 100));
+
+	Sphere *redS = new Sphere(glm::vec3(0, 0, -30), 3.95f, Material(glm::vec3(1.00, 0.32, 0.36), glm::vec3(0.7f), 128));
+	Sphere *yellowS = new Sphere(glm::vec3(5, -1, -25), 2, Material(glm::vec3(0.90, 0.76, 0.46), glm::vec3(0.7f), 200));
+	Sphere *lightBlueS = new Sphere(glm::vec3(5, 0, -30), 3, Material(glm::vec3(0.65, 0.77, 0.97), glm::vec3(0.7f), 60));
+	Sphere *lightGrayS = new Sphere(glm::vec3(-5.5, 0, -27), 3, Material(glm::vec3(0.90, 0.90, 0.90), glm::vec3(0.7f), 100));
 
 
 	Object::objectList.push_back(redS);
@@ -63,20 +66,20 @@ void render(const int &WIDTH, const int &HEIGHT)
 	Object::objectList.push_back(floor);
 
 
-	Triangle *tri = new Triangle(glm::vec3(0, 1, -16.1), glm::vec3(-1.9, -1, -16.1), glm::vec3(1.6, -0.5, -16.1), Material(glm::vec3(0, 0.5, 0.5), glm::vec3(0.7f), 128));
+	//Triangle *tri = new Triangle(glm::vec3(0, 1, -16.1), glm::vec3(-1.9, -1, -16.1), glm::vec3(1.6, -0.5, -16.1), Material(glm::vec3(0, 0.5, 0.5), glm::vec3(0.7f), 128));
 	//Triangle triSmooth = Triangle(glm::vec3(0,1,-2), glm::vec3(-1.9, -1, -2), glm::vec3(1.6, -0.5, -2),glm::vec3(0,0.6f,1), glm::vec3(-0.4f,-0.4f,1), glm::vec3(0.4f,-0.4f,1), Material(glm::vec3(0, 0.5, 0.5), glm::vec3(0.7f), 128));
-	Object::objectList.push_back(tri);
+	//Object::objectList.push_back(tri);
 	//objectList.push_back(triSmooth);
-
-	Triangle::MoveObject(fileObjects[0], glm::vec3(7.5, 0, -15));
+	Triangle::MoveObject(fileObjects[0], glm::vec3(6, 4, -12));
+	Triangle::MoveObject(fileObjects[1], glm::vec3(1, 3, -10));
 
 	if (Object::OBJECT_TOGGLE == Object::PRIMATIVE_PLUS_TEAPOT)
 	{
-		Triangle::MoveObject(fileObjects[1], glm::vec3(-6, -2, -13));
+		Triangle::MoveObject(fileObjects[2], glm::vec3(-6, -2, -13));
 	}
 	if (Object::OBJECT_TOGGLE == Object::PRIMATIVE_PLUS_MONKEY)
 	{
-		Triangle::MoveObject(fileObjects[1], glm::vec3(-8, 0, -10));
+		Triangle::MoveObject(fileObjects[2], glm::vec3(-8, 0, -10));
 	}
 
 	for (vector<Triangle*> vTri : fileObjects)
@@ -195,11 +198,12 @@ void createPPM(const int &WIDTH, const int &HEIGHT, glm::vec3 ** image)
 vector<vector<Triangle*>> loadFileObjects()
 {
 	vector<vector<Triangle*>> importedOBJList;
-	importedOBJList.push_back(loadColouredOBJ("cube_simple.obj", Material(glm::vec3(0.6, 0.0, 0.2), glm::vec3(0.7f), 128) ));
+	importedOBJList.push_back(loadColouredOBJ("cube_simple.obj", Material(glm::vec3(0.8, 0.0, 0.8), glm::vec3(0.7f), 128)));
+	importedOBJList.push_back(loadColouredOBJ("custom.obj", Material(glm::vec3(0.6, 0.0, 0.2), glm::vec3(0.7f), 30)));
 
 	if (Object::OBJECT_TOGGLE == Object::PRIMATIVE_PLUS_TEAPOT)
 	{
-		importedOBJList.push_back(loadColouredOBJ("teapot_simple.obj", Material(glm::vec3(0, 1, 0.9), glm::vec3(0.7f), 128)));
+		importedOBJList.push_back(loadColouredOBJ("teapot_simple.obj", Material(glm::vec3(0.55, 0.46, 0), glm::vec3(0.7f), 30)));
 	}
 	if (Object::OBJECT_TOGGLE == Object::PRIMATIVE_PLUS_MONKEY)
 	{
@@ -251,6 +255,15 @@ int main(int argc, char* args[])
 			case SDL_KEYDOWN:
 				switch (event.key.keysym.sym)
 				{
+				case SDLK_1:
+					activeLight = 1;
+					reRender();
+					break;		
+				case SDLK_2:
+					activeLight = 2;
+					reRender();
+					break;
+
 				case SDLK_l:
 					Object::LIGHTING += 1;
 					if (Object::LIGHTING == 4)Object::LIGHTING = 0;
@@ -311,9 +324,11 @@ int main(int argc, char* args[])
 
 void reRender()
 {
+	LightMain::lights.clear();
 	Object::objectList.clear();
 	SDL_DestroyWindow(window);
 	fileObjects.clear();
 	fileObjects = loadFileObjects();
 	render(APP_WIDTH*sizeModifier, APP_HEIGHT*sizeModifier);
 }
+

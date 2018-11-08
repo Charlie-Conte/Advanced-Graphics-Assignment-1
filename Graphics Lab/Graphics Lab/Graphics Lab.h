@@ -32,7 +32,7 @@ vector<vector<Triangle*>> loadFileObjects();
 vector<Triangle*> loadColouredOBJ(string OBJ_Name, Material material);
 void render(const int &WIDTH, const int &HEIGHT);
 
-
+int activeLight = 1;
 
 
 

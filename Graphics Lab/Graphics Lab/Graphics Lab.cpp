@@ -40,8 +40,8 @@ void render(const int &WIDTH, const int &HEIGHT)
 
 	AreaLight *MainLight = nullptr;
 
-	if (activeLight == 1)MainLight = new AreaLight(glm::vec3(-4.5, 10, 0), glm::vec3(1), glm::vec3(9, 0.1, 9));
-	if (activeLight == 2)MainLight = new AreaLight(glm::vec3(10, 10, 0), glm::vec3(1), glm::vec3(5, 0.1, 5));
+	if (activeLight == 2)MainLight = new AreaLight(glm::vec3(-4.5, 10, 0), glm::vec3(1), glm::vec3(9, 0.1, 9));
+	if (activeLight == 1)MainLight = new AreaLight(glm::vec3(10, 10, 0), glm::vec3(1), glm::vec3(5, 0.1, 5));
 
 	LightMain::lights.push_back(MainLight);
 

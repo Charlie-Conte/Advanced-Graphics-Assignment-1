@@ -15,7 +15,7 @@
 # Build results
 
 [Dd]ebugPublic/
-[Rr]elease/
+
 [Rr]eleases/
 bld/
 [Bb]in/
@@ -61,7 +61,7 @@ StyleCopReport.xml
 *_i.h
 *.ilk
 *.meta
-*.obj
+
 *.iobj
 *.pch
 *.pdb

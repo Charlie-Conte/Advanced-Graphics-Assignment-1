@@ -235,6 +235,10 @@ int main(int argc, char* args[])
 {
 	SDL_Init(SDL_INIT_VIDEO);
 	basePath = SDL_GetBasePath();
+	if (basePath == "")
+	{
+		cout << "SDL_GetBasePath failed\n";
+	}
 	SDL_free(&basePath);
 
 
@@ -330,5 +334,6 @@ void reRender()
 	fileObjects.clear();
 	fileObjects = loadFileObjects();
 	render(APP_WIDTH*sizeModifier, APP_HEIGHT*sizeModifier);
+	cout << "Done\n\n";
 }
 

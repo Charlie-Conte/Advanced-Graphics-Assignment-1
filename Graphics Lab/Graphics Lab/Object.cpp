@@ -24,7 +24,7 @@ void Object::calculateColour(glm::vec3 & p0, glm::vec3 ** image, int x, int y, M
 {
 
 	bool hasHit = false;
-	float shadowSoftness;
+	float shadowSoftness =NULL;
 
 	glm::vec3 ambientColour;
 	glm::vec3 diffuseColour;

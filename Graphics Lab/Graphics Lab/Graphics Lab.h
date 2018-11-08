@@ -4,7 +4,7 @@
 #include "Plane.h"
 #include "Triangle.h"
 #include "objloader.h"
-#include "LightSource.h"
+#include "AreaLight.h"
 
 
 string basePath;

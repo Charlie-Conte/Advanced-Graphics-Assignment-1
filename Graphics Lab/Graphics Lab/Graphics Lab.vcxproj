@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AreaLight.cpp" />
     <ClCompile Include="Graphics Lab.cpp" />
     <ClCompile Include="LightMain.cpp" />
     <ClCompile Include="LightSource.cpp" />
@@ -31,6 +32,7 @@
     <ClCompile Include="Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AreaLight.h" />
     <ClInclude Include="Graphics Lab.h" />
     <ClInclude Include="LightMain.h" />
     <ClInclude Include="LightSource.h" />

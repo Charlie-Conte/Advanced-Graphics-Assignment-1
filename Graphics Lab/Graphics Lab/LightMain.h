@@ -1,15 +1,15 @@
 #pragma once
 #include "MainIncludes.h"
-#include "LightSource.h"
+#include "AreaLight.h"
 class LightMain 
 {
 public:
 
 	LightMain();
-	static vector<LightSource> lights;
+	static vector<AreaLight*> lights;
 
 	static glm::vec3 ambientLight;
-
+	static int SAMPLES;
 
 };
 

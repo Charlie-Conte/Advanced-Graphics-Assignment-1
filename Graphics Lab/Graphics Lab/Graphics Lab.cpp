@@ -40,7 +40,7 @@ void render(const int &WIDTH, const int &HEIGHT)
 
 
 
-	LightSource MainLight = LightSource(glm::vec3(0, 20, 0), glm::vec3(1));
+	AreaLight *MainLight = new AreaLight(glm::vec3(-4.5, 20, -4.5), glm::vec3(1),glm::vec3(9,0.1,9));
 	LightMain::lights.push_back(MainLight);
 
 
@@ -259,7 +259,7 @@ int main(int argc, char* args[])
 					break;		
 				case SDLK_s:
 					Object::SHADOWS += 1;
-					if (Object::SHADOWS == 2)Object::SHADOWS = 0;
+					if (Object::SHADOWS == 3)Object::SHADOWS = 0;
 					reRender();
 					break;
 

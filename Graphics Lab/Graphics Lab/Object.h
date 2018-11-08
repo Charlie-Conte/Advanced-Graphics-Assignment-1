@@ -11,9 +11,9 @@ public:
 	Object(glm::vec3 position, Material material);
 	void PrintMatrix();
 
-	static vector<glm::vec3> calculateColour(glm::vec3 & p0, glm::vec3 ** image, int x, int y,Material material, glm::vec3 normal, glm::vec3 rayDirection);
+	static void calculateColour(glm::vec3 & p0, glm::vec3 ** image, int x, int y,Material material, glm::vec3 normal, glm::vec3 rayDirection);
 
-	static void setShadow(bool hasHit, glm::vec3 ** image, int x, int y, glm::vec3 ambientColour, glm::vec3 diffuseColour, glm::vec3 specularColour);
+	static void setShadow(bool hasHit, float shadowSoftness, glm::vec3 ** image, int x, int y, glm::vec3 ambientColour, glm::vec3 diffuseColour, glm::vec3 specularColour);
 
 
 	virtual double intersect(Ray * ray);
@@ -37,7 +37,8 @@ public:
 	enum shadowState
 	{
 		NO_SHADOW = 0,
-		HARD = 1
+		HARD = 1,
+		SOFT = 2
 	};
 
 	enum objectState

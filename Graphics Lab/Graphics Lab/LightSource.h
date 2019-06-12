@@ -2,6 +2,7 @@
 #include "MainIncludes.h"
 #include "Material.h"
 
+//Point Light
 class LightSource 
 {
 public:

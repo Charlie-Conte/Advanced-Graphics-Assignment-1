@@ -7,7 +7,7 @@ Material::Material(glm::vec3 diffuseColour, glm::vec3 specularColour, float shin
 {
 	_diffuseColour = diffuseColour;
 	_specularColour = specularColour;
-	_shininess = shininess;
+	_shinyness = shininess;
 }
 
 Material::Material()

@@ -1,15 +1,6 @@
 #include "Triangle.h"
 
 
-
-//Triangle::Triangle()
-//{
-//	_vert0 = glm::vec3(0, 0, 5);
-//	_vert1 = glm::vec3(1, 0, 5);
-//	_vert2 = glm::vec3(1, 1, 5);
-//	_material = Material(glm::vec3(0.5f, 0, 0.5f), glm::vec3(0.7f), 64);
-//}
-
 Triangle::Triangle(glm::vec3 vert0, glm::vec3 vert1, glm::vec3 vert2, Material material) :
 	Object(glm::vec3(0), material), _vert0(vert0), _vert1(vert1), _vert2(vert2)
 {
@@ -32,37 +23,6 @@ void Triangle::MoveObject(std::vector<Triangle*> object, glm::vec3 movementVecto
 	}
 	//std::cout << "\n\n\n"<< std::endl;
 }
-
-//void Triangle::renderTriangles(std::list<Triangle> &triangles, glm::vec3 &rayOrigin, glm::vec3 &rayDirection, glm::vec3 ** image, int x, int y, glm::vec3 &tempP0, glm::vec3 &tempP0Shadow)
-//{
-//
-//	for (Triangle thisTriangle : triangles)
-//	{
-//		double t = thisTriangle.intersect(rayOrigin, rayDirection);
-//
-//		if (t != 0)
-//		{
-//			
-//
-//			glm::vec3 p0 = rayOrigin + (float)t * rayDirection;
-//
-//
-//			if (thisTriangle._normal0 == glm::vec3(0) && thisTriangle._normal1 == glm::vec3(0)&& thisTriangle._normal2 == glm::vec3(0))
-//			{
-//				glm::vec3 flatFaceNormal;
-//				flatFaceNormal.x = (thisTriangle.e1.y * thisTriangle.e2.z) - (thisTriangle.e1.z * thisTriangle.e2.y);
-//				flatFaceNormal.y = (thisTriangle.e1.z * thisTriangle.e2.x) - (thisTriangle.e1.x * thisTriangle.e2.z);
-//				flatFaceNormal.z = (thisTriangle.e1.x * thisTriangle.e2.y) - (thisTriangle.e1.y * thisTriangle.e2.x);
-//				thisTriangle._normal0 = glm::normalize(flatFaceNormal);
-//				thisTriangle._normal1 = glm::normalize(flatFaceNormal);
-//				thisTriangle._normal2 = glm::normalize(flatFaceNormal);
-//				//std::cout << glm::length(thisTriangle._normal) << std::endl;
-//			}
-
-//
-//		}
-//	}
-//}
 
 double Triangle::intersect(Ray *ray)
 {

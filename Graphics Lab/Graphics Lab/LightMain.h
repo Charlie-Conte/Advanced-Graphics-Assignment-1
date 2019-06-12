@@ -1,6 +1,7 @@
 #pragma once
 #include "MainIncludes.h"
 #include "AreaLight.h"
+//Light manager
 class LightMain 
 {
 public:

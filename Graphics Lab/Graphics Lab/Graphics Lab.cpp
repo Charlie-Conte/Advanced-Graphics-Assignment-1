@@ -35,8 +35,8 @@ void render(const int &WIDTH, const int &HEIGHT)
 	iAR = WIDTH / (float)HEIGHT;
 
 
-
-#pragma region Setup Scene
+//Instantiates objects at positions
+#pragma region Setup Scene 
 
 	AreaLight *MainLight = nullptr;
 
@@ -66,10 +66,6 @@ void render(const int &WIDTH, const int &HEIGHT)
 	Object::objectList.push_back(floor);
 
 
-	//Triangle *tri = new Triangle(glm::vec3(0, 1, -16.1), glm::vec3(-1.9, -1, -16.1), glm::vec3(1.6, -0.5, -16.1), Material(glm::vec3(0, 0.5, 0.5), glm::vec3(0.7f), 128));
-	//Triangle triSmooth = Triangle(glm::vec3(0,1,-2), glm::vec3(-1.9, -1, -2), glm::vec3(1.6, -0.5, -2),glm::vec3(0,0.6f,1), glm::vec3(-0.4f,-0.4f,1), glm::vec3(0.4f,-0.4f,1), Material(glm::vec3(0, 0.5, 0.5), glm::vec3(0.7f), 128));
-	//Object::objectList.push_back(tri);
-	//objectList.push_back(triSmooth);
 	Triangle::MoveObject(fileObjects[0], glm::vec3(6, 4, -12));
 	Triangle::MoveObject(fileObjects[1], glm::vec3(1, 3, -10));
 
@@ -94,6 +90,7 @@ void render(const int &WIDTH, const int &HEIGHT)
 
 #pragma endregion
 
+
 	window = SDL_CreateWindow("Viewer", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
 	if (window == 0)
 	{
@@ -108,6 +105,8 @@ void render(const int &WIDTH, const int &HEIGHT)
 		cout << "SDL_FillRect failed\n";
 	}
 
+
+	//Fill Rect with pixels for an image
 	for (int y = 0; y < HEIGHT; ++y)
 	{
 		for (int x = 0; x < WIDTH; ++x)
@@ -195,6 +194,7 @@ void createPPM(const int &WIDTH, const int &HEIGHT, glm::vec3 ** image)
 	ofs.close();
 }
 
+//File importer
 vector<vector<Triangle*>> loadFileObjects()
 {
 	vector<vector<Triangle*>> importedOBJList;
@@ -210,12 +210,9 @@ vector<vector<Triangle*>> loadFileObjects()
 		importedOBJList.push_back(loadColouredOBJ("monkey_simple.obj", Material(glm::vec3(0.37, 0.15, 0.02), glm::vec3(0.7f), 50)));
 	}
 
-
-
 	return importedOBJList;
-
-
 }
+
 vector<Triangle*> loadColouredOBJ(string OBJ_Name, Material material)
 {
 	vector<glm::vec3> verts, norms;
@@ -247,6 +244,13 @@ int main(int argc, char* args[])
 	render(APP_WIDTH*sizeModifier, APP_HEIGHT*sizeModifier);
 	cout << "Done\n\n";
 
+	InputManager();
+
+	return 0;
+}
+
+int InputManager()
+{
 
 
 	SDL_Event event;
@@ -262,7 +266,7 @@ int main(int argc, char* args[])
 				case SDLK_1:
 					activeLight = 1;
 					reRender();
-					break;		
+					break;
 				case SDLK_2:
 					activeLight = 2;
 					reRender();
@@ -273,7 +277,7 @@ int main(int argc, char* args[])
 					if (Object::LIGHTING == 4)Object::LIGHTING = 0;
 					if (Object::LIGHTING == 0)Object::SHADOWS = Object::NO_SHADOW;
 					reRender();
-					break;		
+					break;
 				case SDLK_s:
 					Object::SHADOWS += 1;
 					if (Object::SHADOWS == 3)Object::SHADOWS = 0;
@@ -283,7 +287,7 @@ int main(int argc, char* args[])
 				case SDLK_EQUALS:
 					FOVmod += FOVincrement;
 					reRender();
-					break;		
+					break;
 				case SDLK_MINUS:
 					FOVmod -= FOVincrement;
 					reRender();
@@ -295,7 +299,7 @@ int main(int argc, char* args[])
 				case SDLK_n:
 					Object::OBJECT_TOGGLE = Object::PRIMATIVE_PLUS_TEAPOT;
 					reRender();
-					break;				
+					break;
 				case SDLK_m:
 					Object::OBJECT_TOGGLE = Object::PRIMATIVE_PLUS_MONKEY;
 					reRender();
@@ -304,7 +308,7 @@ int main(int argc, char* args[])
 				case SDLK_UP:
 					sizeModifier += sizeIncrement;
 					reRender();
-					break;				
+					break;
 				case SDLK_DOWN:
 					sizeModifier -= sizeIncrement;
 					reRender();
@@ -322,8 +326,6 @@ int main(int argc, char* args[])
 		}
 	}
 
-
-	return 0;
 }
 
 void reRender()

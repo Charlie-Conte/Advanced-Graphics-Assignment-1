@@ -3,6 +3,7 @@
 
 class Object;
 
+
 class Ray
 {
 public:

@@ -15,8 +15,6 @@ const int APP_HEIGHT = 720;
 
 SDL_Window *window;
 
-//const int APP_WIDTH = 800;
-//const int APP_HEIGHT = 400;
 
 //Angle A
 const int FOV = 60;
@@ -37,5 +35,7 @@ int activeLight = 1;
 
 
 int main(int argc, char* args[]);
+
+int InputManager();
 
 void reRender();

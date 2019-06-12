@@ -1,13 +1,6 @@
 #include "Sphere.h"
 
 
-//Sphere::Sphere()
-//{
-//	_position = glm::vec3(0);
-//	_radius = 1;
-//	_material = Material(glm::vec3(0.5f, 0, 0.5f), glm::vec3(0.7f), 64);
-//}
-
 
 
 //Sphere example (vector 3(3.0,4.0,10.0), float 3.2, vector 3(0.2,0.0,0.64))
@@ -37,22 +30,6 @@ double Sphere::intersect(Ray *ray)
 	
 }
 
-//glm::vec3 Sphere::sphereShadowsAndReflection(vector<glm::vec3> listOfShadowRays, glm::vec3 ** image, int x, int y, glm::vec3 p0)
-//{
-//
-//	for (int i = 0; i < listOfShadowRays.size(); i++)
-//	{
-//		double t0 = intersect(new Ray(p0, listOfShadowRays[i]));
-//		if (t0 > 0)
-//		{
-//			//image[x][y] = _material._diffuseColour * LightMain::ambientLight;
-//			return glm::vec3(LightMain::lights[i]._position + (float)t0 * listOfShadowRays[i]);
-//		}
-//
-//
-//	}
-//
-//}
 
 glm::vec3 Sphere::normal(glm::vec3 p0)
 {

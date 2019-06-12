@@ -4,16 +4,14 @@ class Triangle :
 	public Object
 {
 public:
-	//Triangle();
+
 	Triangle(glm::vec3 vert0, glm::vec3 vert1, glm::vec3 vert2, Material material);
 
 	Triangle(glm::vec3 vert0, glm::vec3 vert1, glm::vec3 vert2, glm::vec3 normal0, glm::vec3 normal1, glm::vec3 normal2, Material material);
 
 
-
+	//As all objects are made of triangles, this moves all the contained triangles
 	static void MoveObject(std::vector<Triangle*> object, glm::vec3 movementVector);
-
-	//static void renderTriangles(std::list<Triangle>& triangles, glm::vec3 & rayOrigin, glm::vec3 & rayDirection, glm::vec3 ** image, int x, int y, glm::vec3 &tempP0, glm::vec3 &tempP0Shadow);
 
 	double intersect(Ray *ray) override;
 

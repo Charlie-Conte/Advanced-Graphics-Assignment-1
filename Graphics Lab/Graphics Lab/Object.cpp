@@ -6,6 +6,7 @@ int Object::LIGHTING = Object::ALL;
 int Object::SHADOWS = Object::HARD;
 int Object::OBJECT_TOGGLE = Object::PRIMATIVE;
 
+
 Object::Object(glm::vec3 position, Material material) :
 	_position(position), _material(material)
 {

@@ -50,7 +50,7 @@ void Object::calculateColour(glm::vec3 & p0, glm::vec3 ** image, int x, int y, M
 		glm::vec3 r = 2.0f * (glm::dot(l, n)) * n - l;
 
 		float rDotV = glm::dot(glm::normalize(r), rayDirection *-1.0f);
-		specularColour = material._specularColour	* lightSource->_intensity	*	glm::pow(glm::max(rDotV, 0.0f), material._shininess);
+		specularColour = material._specularColour	* lightSource->_intensity	*	glm::pow(glm::max(rDotV, 0.0f), material._shinyness);
 
 
 

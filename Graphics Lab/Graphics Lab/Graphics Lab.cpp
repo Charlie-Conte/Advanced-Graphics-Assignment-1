@@ -238,6 +238,27 @@ int main(int argc, char* args[])
 	}
 	SDL_free(&basePath);
 
+	cout <<
+		"Controls" << endl <<
+		"Up / Down : Increace / Decreace resolution" << endl <<
+
+		"- / = : Increace / Decreace FOV" << endl <<
+
+		"l : switch between lighting modes" << endl <<
+
+		"s : switch between shadow modes" << endl <<
+
+		"1 : switch to camera 1" << endl <<
+
+		"2 : switch to camera 2" << endl <<
+
+		"b : load scene with just basic objects" << endl <<
+
+		"n : load scene with basic objects and teapot" << endl <<
+
+		"m : load scene with basic objects and monkey" << endl<< endl;
+		
+
 
 	fileObjects = loadFileObjects();
 
